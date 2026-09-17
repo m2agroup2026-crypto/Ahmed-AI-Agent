@@ -2,15 +2,14 @@ from datetime import datetime, timedelta
 
 from jose import jwt
 
+from app.config.settings import settings
 
-SECRET_KEY = "NEXORA_DEVELOPMENT_SECRET_CHANGE_IN_PRODUCTION"
-
-ALGORITHM = "HS256"
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 
 def create_access_token(data: dict):
+
     to_encode = data.copy()
 
     expire = datetime.utcnow() + timedelta(
@@ -25,17 +24,18 @@ def create_access_token(data: dict):
 
     return jwt.encode(
         to_encode,
-        SECRET_KEY,
-        algorithm=ALGORITHM
+        settings.SECRET_KEY,
+        algorithm=settings.ALGORITHM
     )
 
 
 def verify_token(token: str):
+
     try:
         payload = jwt.decode(
             token,
-            SECRET_KEY,
-            algorithms=[ALGORITHM]
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
         )
 
         return payload
