@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -30,6 +30,16 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(
         String(255),
         nullable=False
+    )
+
+    role_id: Mapped[int | None] = mapped_column(
+        ForeignKey("roles.id"),
+        nullable=True
+    )
+
+    role = relationship(
+        "Role",
+        backref="users"
     )
 
     is_active: Mapped[bool] = mapped_column(
