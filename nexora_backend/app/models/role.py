@@ -1,5 +1,5 @@
 from sqlalchemy import Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -18,4 +18,9 @@ class Role(Base):
         String(50),
         unique=True,
         nullable=False
+    )
+
+    permissions = relationship(
+        "RolePermission",
+        back_populates="role"
     )

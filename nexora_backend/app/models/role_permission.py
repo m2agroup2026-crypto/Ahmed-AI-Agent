@@ -1,5 +1,5 @@
 from sqlalchemy import Integer, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -22,4 +22,14 @@ class RolePermission(Base):
     permission_id: Mapped[int] = mapped_column(
         ForeignKey("permissions.id"),
         nullable=False
+    )
+
+    role = relationship(
+        "Role",
+        back_populates="permissions"
+    )
+
+    permission = relationship(
+        "Permission",
+        back_populates="role_permissions"
     )
