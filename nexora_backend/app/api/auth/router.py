@@ -69,3 +69,20 @@ def current_user(
         "email": user.email,
         "is_active": user.is_active
     }
+
+
+from app.api.auth.permission_dependencies import require_permission
+
+
+@router.get("/admin-test")
+def admin_test(
+    allowed: bool = Depends(
+        require_permission("dashboard.manage")
+    )
+):
+
+    return {
+        "message": "NEXORA protected endpoint",
+        "permission": "dashboard.manage",
+        "access": "granted"
+    }
