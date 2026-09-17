@@ -46,3 +46,26 @@ def login(
         user_data.email,
         user_data.password
     )
+
+
+from app.api.auth.dependencies import get_current_user_id
+from app.services.current_user_service import get_user_by_id
+
+
+@router.get("/me")
+def current_user(
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db)
+):
+
+    user = get_user_by_id(
+        db,
+        user_id
+    )
+
+    return {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "is_active": user.is_active
+    }
