@@ -1,6 +1,6 @@
 from app.database.base import Base
 from app.database.connection import engine
-from app.models import User, Role
+from app.models import User, Role, Permission
 
 
 def create_tables():
