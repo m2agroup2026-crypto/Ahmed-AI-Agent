@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from datetime import datetime
+from dataclasses import dataclass, field
+from datetime import datetime, UTC
 
 
 @dataclass
@@ -9,7 +9,7 @@ class SystemHealth:
 
     status: str
 
-    checked_at: datetime = datetime.utcnow()
+    checked_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 class MonitoringEngine:

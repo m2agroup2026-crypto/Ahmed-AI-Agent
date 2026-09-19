@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 
 class Plan:
@@ -14,7 +14,7 @@ class Plan:
         self.currency = currency
         self.price = price
         self.credits_limit = credits_limit
-        self.created_at = datetime.utcnow()
+        self.created_at = datetime.now(UTC)
 
 
 class Subscription:
@@ -28,7 +28,7 @@ class Subscription:
         self.user_id = user_id
         self.plan_id = plan_id
         self.status = status
-        self.created_at = datetime.utcnow()
+        self.created_at = datetime.now(UTC)
 
 
 class CreditWallet:
@@ -54,4 +54,4 @@ class UsageRecord:
         self.user_id = user_id
         self.action = action
         self.credits = credits
-        self.created_at = datetime.utcnow()
+        self.created_at = datetime.now(UTC)
