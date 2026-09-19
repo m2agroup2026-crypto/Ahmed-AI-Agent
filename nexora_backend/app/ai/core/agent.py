@@ -12,6 +12,7 @@ class NexoraAgent:
 
     def process(
         self,
+        db,
         user_id: int,
         text: str
     ):
@@ -21,6 +22,8 @@ class NexoraAgent:
             text
         )
 
+
         return self.pipeline.run(
-            state
+            state,
+            db
         )
