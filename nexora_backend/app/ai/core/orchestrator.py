@@ -1,5 +1,7 @@
 from app.ai.core.agent import NexoraAgent
 from app.ai.governance.audit import AuditLogger, AuditRecord
+from app.ai.billing.action_mapper import map_action
+from app.ai.integration.billing_adapter import BillingAdapter
 
 
 class NexoraOrchestrator:
@@ -10,6 +12,8 @@ class NexoraOrchestrator:
         self.agent = NexoraAgent()
 
         self.audit = AuditLogger()
+
+        self.billing = BillingAdapter()
 
 
     def run(
@@ -27,6 +31,17 @@ class NexoraOrchestrator:
 
 
         decision = result["decision"]
+
+
+        action = map_action(
+            result["state"].intent
+        )
+
+
+        self.billing.charge_ai_action(
+            user_id,
+            action
+        )
 
 
         self.audit.record(

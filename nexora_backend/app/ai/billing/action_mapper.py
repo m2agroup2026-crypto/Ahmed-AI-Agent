@@ -1,0 +1,29 @@
+ACTION_MAP = {
+
+    "GENERAL_QUERY": "GENERAL_QUERY",
+
+    "VIEW_USERS": "GENERAL_QUERY",
+
+    "VIEW_DASHBOARD": "ANALYTICS",
+
+    "CHECK_SYSTEM_STATUS": "GENERAL_QUERY",
+
+    "REPORT": "REPORT_GENERATION",
+
+    "REPORT_GENERATION": "REPORT_GENERATION",
+
+    "ANALYSIS": "ANALYTICS",
+
+    "ANALYTICS": "ANALYTICS",
+
+    "EXPORT": "EXPORT",
+
+}
+
+
+def map_action(intent):
+
+    return ACTION_MAP.get(
+        intent,
+        "GENERAL_QUERY"
+    )
