@@ -3,12 +3,11 @@ from datetime import datetime, UTC
 
 class Subscription:
 
-
     def __init__(
         self,
         user_id: int,
         plan_id: int,
-        status: str = "ACTIVE"
+        status: str = "active"
     ):
 
         self.user_id = user_id
