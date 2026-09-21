@@ -40,6 +40,7 @@ jobs:
           python -c "import sys; sys.path.insert(0, 'nexora_backend'); from app.main import app; print(app.title)"
 
       - name: Create clean deployment package
+        shell: bash
         run: |
           rm -rf "${{ env.DEPLOYMENT_PACKAGE }}"
           mkdir -p "${{ env.DEPLOYMENT_PACKAGE }}"
@@ -51,11 +52,22 @@ jobs:
             cp nexora_backend/.env.example "${{ env.DEPLOYMENT_PACKAGE }}/.env.example"
           fi
 
-          find "${{ env.DEPLOYMENT_PACKAGE }}" -type d -name "__pycache__" -prune -exec rm -rf {} +
-          find "${{ env.DEPLOYMENT_PACKAGE }}" -type f -name "*.pyc" -delete
+          find "${{ env.DEPLOYMENT_PACKAGE }}" \
+            -type d \
+            -name "__pycache__" \
+            -prune \
+            -exec rm -rf {} +
+
+          find "${{ env.DEPLOYMENT_PACKAGE }}" \
+            -type f \
+            -name "*.pyc" \
+            -delete
 
           echo "Deployment package contents:"
-          find "${{ env.DEPLOYMENT_PACKAGE }}" -maxdepth 3 -type f | sort
+          find "${{ env.DEPLOYMENT_PACKAGE }}" \
+            -maxdepth 4 \
+            -type f \
+            | sort
 
       - name: Upload deployment artifact
         uses: actions/upload-artifact@v4
@@ -70,6 +82,7 @@ jobs:
     name: Deploy Nexora Backend
     runs-on: ubuntu-24.04
     needs: build
+
     environment:
       name: Production
       url: https://nexora-ai-dev.azurewebsites.net
@@ -84,81 +97,10 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_355037B0A59841358367EA5EDD7CCE76 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_ED08651DC7A840219C92021444D7098C }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7A55D417E71E441DBD401CCD5C7D9125 }}
 
       - name: Locate Azure resource group
         id: resource-group
-        shell: bash
-        run: |
-          RESOURCE_GROUP=$(az webapp list \
-            --query "[?name=='${{ env.AZURE_WEBAPP_NAME }}'].resourceGroup | [0]" \
-            --output tsv)
-
-          if [ -z "$RESOURCE_GROUP" ]; then
-            echo "Azure Web App was not found."
-            exit 1
-          fi
-
-          echo "resource-group=$RESOURCE_GROUP" >> "$GITHUB_OUTPUT"
-          echo "Azure resource group found: $RESOURCE_GROUP"
-
-      - name: Configure Azure App Service
-        shell: bash
-        run: |
-          az webapp config appsettings set \
-            --resource-group "${{ steps.resource-group.outputs.resource-group }}" \
-            --name "${{ env.AZURE_WEBAPP_NAME }}" \
-            --settings \
-              SCM_DO_BUILD_DURING_DEPLOYMENT=true \
-              ENABLE_ORYX_BUILD=true
-
-          az webapp config set \
-            --resource-group "${{ steps.resource-group.outputs.resource-group }}" \
-            --name "${{ env.AZURE_WEBAPP_NAME }}" \
-            --startup-file "gunicorn --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0:8000 --timeout 600 --access-logfile - --error-logfile - app.main:app"
-
-      - name: Deploy to Azure App Service
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          slot-name: Production
-          package: application
-
-      - name: Restart Azure Web App
-        shell: bash
-        run: |
-          az webapp restart \
-            --resource-group "${{ steps.resource-group.outputs.resource-group }}" \
-            --name "${{ env.AZURE_WEBAPP_NAME }}"
-
-      - name: Check Nexora health endpoint
-        shell: bash
-        run: |
-          echo "Waiting for Nexora Backend to start..."
-          sleep 45
-
-          for attempt in 1 2 3 4 5; do
-            echo "Health-check attempt: $attempt"
-
-            if curl \
-              --fail \
-              --show-error \
-              --silent \
-              --max-time 30 \
-              "https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/health"; then
-              echo
-              echo "Nexora Backend is running successfully."
-              exit 0
-            fi
-
-            sleep 20
-          done
-
-          echo "Deployment completed, but the health endpoint is not responding yet."
-          exit 1
-
-      - name: Logout from Azure
-        if: always()
-        run: az logout
+ 
