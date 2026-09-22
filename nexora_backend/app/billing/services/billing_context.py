@@ -2,6 +2,7 @@ from app.billing.services.wallet_service import WalletService
 from app.billing.services.subscription_service import SubscriptionService
 from app.billing.services.credit_ledger_service import CreditLedgerService
 from app.billing.integration.ai_billing import AIBillingService
+from app.database.connection import SessionLocal
 
 
 class BillingContext:
@@ -9,12 +10,13 @@ class BillingContext:
     def __init__(
         self,
         wallet_service=None,
-        subscription_service=None
+        subscription_service=None,
+        db=None
     ):
 
         self.wallet_service = (
             wallet_service
-            or WalletService()
+            or WalletService(db=db)
         )
 
         self.subscription_service = (

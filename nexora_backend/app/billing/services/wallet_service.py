@@ -4,15 +4,16 @@ from app.billing.repositories.wallet_repository import WalletRepository
 
 class WalletService:
 
-
     def __init__(
         self,
-        repository=None
+        repository=None,
+        db=None
     ):
 
-        self.repository = repository or WalletRepository()
-
-
+        self.repository = (
+            repository
+            or WalletRepository(db=db)
+        )
 
     def create_wallet(
         self,
@@ -29,8 +30,6 @@ class WalletService:
             wallet
         )
 
-
-
     def get_wallet(
         self,
         user_id: int
@@ -39,8 +38,6 @@ class WalletService:
         return self.repository.get(
             user_id
         )
-
-
 
     def add_credits(
         self,
@@ -64,8 +61,6 @@ class WalletService:
         return self.repository.update(
             wallet
         )
-
-
 
     def consume_credits(
         self,
