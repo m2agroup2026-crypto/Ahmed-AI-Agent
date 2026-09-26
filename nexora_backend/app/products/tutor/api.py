@@ -245,3 +245,10 @@ from app.products.tutor.teaching_reasoning.router import router as teaching_reas
 router.include_router(
     teaching_reasoning_router
 )
+
+
+from app.products.tutor.adaptive_loop.router import router as adaptive_loop_router
+
+router.include_router(
+    adaptive_loop_router
+)
