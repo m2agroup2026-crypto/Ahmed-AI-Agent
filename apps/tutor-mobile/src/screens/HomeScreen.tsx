@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import type { LessonSummary, TutorProgress, TutorSubject } from "@contracts/tutor";
+import type { LessonSummary, TutorProgress, TutorRecommendation, TutorSubject } from "@contracts/tutor";
 import { TutorApi } from "../api/client";
 import { theme } from "../theme";
 
 type Props = {
   api: TutorApi;
   onOpenLesson: (lesson: LessonSummary) => void;
+  onOpenPractice: (recommendation: TutorRecommendation) => void;
 };
 
-export function HomeScreen({ api, onOpenLesson }: Props) {
+export function HomeScreen({ api, onOpenLesson, onOpenPractice }: Props) {
   const [lessons, setLessons] = useState<LessonSummary[]>([]);
   const [progress, setProgress] = useState<TutorProgress | null>(null);
+  const [recommendation, setRecommendation] = useState<TutorRecommendation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,6 +28,10 @@ export function HomeScreen({ api, onOpenLesson }: Props) {
       })
       .catch((reason: Error) => active && setError(reason.message))
       .finally(() => active && setLoading(false));
+    api
+      .recommendation()
+      .then((next) => active && setRecommendation(next))
+      .catch(() => active && setRecommendation(null));
     return () => {
       active = false;
     };
@@ -61,6 +67,19 @@ export function HomeScreen({ api, onOpenLesson }: Props) {
           <View style={styles.progressRing}>
             <Text style={styles.progressValue}>{Math.round(progress.accuracy_percent)}%</Text>
           </View>
+        </View>
+      )}
+
+      {recommendation && (
+        <View style={styles.recommendationCard}>
+          <View style={styles.recommendationCopy}>
+            <Text style={styles.recommendationLabel}>الخطوة المقترحة لك</Text>
+            <Text style={styles.recommendationTitle}>{recommendation.question.prompt_ar}</Text>
+            <Text style={styles.recommendationHint}>{recommendation.message_ar}</Text>
+          </View>
+          <Pressable style={styles.recommendationButton} onPress={() => onOpenPractice(recommendation)}>
+            <Text style={styles.recommendationButtonText}>ابدأ التدريب</Text>
+          </Pressable>
         </View>
       )}
 
@@ -121,4 +140,11 @@ const styles = StyleSheet.create({
   progressHint: { color: theme.colors.muted, fontSize: 13, textAlign: "right", marginTop: 5 },
   progressRing: { width: 66, height: 66, borderRadius: 33, borderWidth: 6, borderColor: theme.colors.gold, justifyContent: "center", alignItems: "center", marginLeft: 14 },
   progressValue: { color: theme.colors.ink, fontSize: 15, fontWeight: "800" },
+  recommendationCard: { backgroundColor: theme.colors.navy, borderRadius: 22, padding: 18, marginBottom: 22 },
+  recommendationCopy: { marginBottom: 14 },
+  recommendationLabel: { color: theme.colors.gold, fontSize: 12, fontWeight: "800", textAlign: "right" },
+  recommendationTitle: { color: theme.colors.white, fontSize: 17, lineHeight: 25, fontWeight: "800", textAlign: "right", marginTop: 7 },
+  recommendationHint: { color: "#c8d5e5", fontSize: 13, lineHeight: 21, textAlign: "right", marginTop: 6 },
+  recommendationButton: { backgroundColor: theme.colors.teal, borderRadius: 13, minHeight: 48, justifyContent: "center", alignItems: "center" },
+  recommendationButtonText: { color: theme.colors.white, fontWeight: "800", fontSize: 15 },
 });

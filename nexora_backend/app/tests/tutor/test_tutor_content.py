@@ -10,6 +10,7 @@ from app.products.tutor.importer import import_curriculum_bundle
 from app.products.tutor.models import AssessmentAttempt, CurriculumLesson
 from app.products.tutor.practice import get_next_question, submit_attempt
 from app.products.tutor.progress import get_progress
+from app.products.tutor.recommendations import get_recommendation
 from app.products.tutor.schemas import CurriculumImportPayload
 from app.models.user import User
 
@@ -145,6 +146,24 @@ def test_practice_question_is_source_grounded_and_attempt_is_scored(db):
     assert progress["max_score"] == 4
     assert progress["accuracy_percent"] == 50.0
     assert progress["next_focus_skill"] == "math.linear-equations"
+
+
+def test_recommendation_starts_with_published_question_and_focuses_weak_skill(db):
+    import_curriculum_bundle(db, _payload())
+
+    first = get_recommendation(db, 1)
+    assert first["status"] == "available"
+    assert first["reason_code"] == "start_learning"
+    assert first["question"]["id"] == "official-linear-question-1"
+    assert first["question"]["source_status"] == "approved"
+
+    submit_attempt(db, 1, first["question"]["id"], "2", "ar-EG")
+    focused = get_recommendation(db, 1, "mathematics", "egypt-secondary-2026")
+
+    assert focused["reason_code"] == "review_focus_skill"
+    assert focused["skill_code"] == "math.linear-equations"
+    assert focused["skill_accuracy_percent"] == 0.0
+    assert focused["question"]["id"] == "official-linear-question-1"
 
 
 def test_unapproved_source_cannot_publish_content(db):

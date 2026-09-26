@@ -2,6 +2,7 @@ import type {
   LessonSummary,
   PracticeAttemptResult,
   PracticeQuestion,
+  TutorRecommendation,
   TutorProgress,
   TutorMessageExchange,
   TutorSessionMessage,
@@ -58,6 +59,12 @@ export class TutorApi {
     if (curriculumVersion) params.set("curriculum_version", curriculumVersion);
     const query = params.toString() ? `?${params.toString()}` : "";
     return this.request<TutorProgress>(`/api/v1/tutor/progress${query}`);
+  }
+
+  recommendation(subjectCode?: TutorSubject, curriculumVersion = "egypt-secondary-2026") {
+    const params = new URLSearchParams({ curriculum_version: curriculumVersion });
+    if (subjectCode) params.set("subject_code", subjectCode);
+    return this.request<TutorRecommendation>(`/api/v1/tutor/recommendation?${params.toString()}`);
   }
 
   saveProfile(payload: {

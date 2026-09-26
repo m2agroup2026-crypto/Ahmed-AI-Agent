@@ -8,6 +8,7 @@ from app.products.tutor.content import list_lessons
 from app.products.tutor.importer import import_curriculum_bundle
 from app.products.tutor.practice import get_next_question, submit_attempt
 from app.products.tutor.progress import get_progress
+from app.products.tutor.recommendations import get_recommendation
 from app.products.tutor.schemas import (
     CurriculumImportPayload,
     CurriculumImportResult,
@@ -19,6 +20,7 @@ from app.products.tutor.schemas import (
     PracticeAttemptResponse,
     PracticeQuestionResponse,
     ProgressResponse,
+    RecommendationResponse,
     SessionCreate,
     SessionResponse,
     TutorAnswer,
@@ -122,6 +124,17 @@ def progress(
 ):
     require_active_user(db, user_id)
     return get_progress(db, user_id, curriculum_version, subject_code)
+
+
+@router.get("/recommendation", response_model=RecommendationResponse)
+def recommendation(
+    subject_code: str | None = Query(default=None, max_length=32),
+    curriculum_version: str = Query(default="egypt-secondary-2026", max_length=64),
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    require_active_user(db, user_id)
+    return get_recommendation(db, user_id, subject_code, curriculum_version)
 
 
 @router.get("/profile", response_model=TutorProfileResponse)

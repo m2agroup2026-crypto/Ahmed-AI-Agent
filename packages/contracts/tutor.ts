@@ -112,4 +112,23 @@ export interface TutorProgress {
   last_activity_at: string | null;
 }
 
+export type TutorRecommendationReason =
+  | "start_learning"
+  | "practice_focus_skill"
+  | "review_focus_skill"
+  | "continue_curriculum"
+  | string;
+
+export interface TutorRecommendation {
+  status: "available" | string;
+  reason_code: TutorRecommendationReason;
+  message_ar: string;
+  message_en: string;
+  subject_code: TutorSubject;
+  curriculum_version: string;
+  skill_code: string | null;
+  skill_accuracy_percent: number | null;
+  question: PracticeQuestion;
+}
+
 export type TutorSessionMessage = TutorMessage;

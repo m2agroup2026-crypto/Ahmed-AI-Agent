@@ -248,6 +248,12 @@ def test_curriculum_import_requires_platform_permission(client):
 
 
 def test_practice_api_returns_question_and_persists_attempt(practice_client):
+    recommendation_response = practice_client.get("/api/v1/tutor/recommendation")
+    assert recommendation_response.status_code == 200
+    recommendation = recommendation_response.json()
+    assert recommendation["reason_code"] == "start_learning"
+    assert recommendation["question"]["id"] == "api-question"
+
     question_response = practice_client.get(
         "/api/v1/tutor/practice/next?subject_code=mathematics"
     )

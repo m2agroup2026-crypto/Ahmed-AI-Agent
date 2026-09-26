@@ -10,10 +10,11 @@ type Props = {
   subjectCode: TutorSubject;
   curriculumVersion: string;
   lessonId?: string;
+  skillCode?: string;
   onBack: () => void;
 };
 
-export function PracticeScreen({ api, subjectCode, curriculumVersion, lessonId, onBack }: Props) {
+export function PracticeScreen({ api, subjectCode, curriculumVersion, lessonId, skillCode, onBack }: Props) {
   const [question, setQuestion] = useState<PracticeQuestion | null>(null);
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState<PracticeAttemptResult | null>(null);
@@ -27,7 +28,7 @@ export function PracticeScreen({ api, subjectCode, curriculumVersion, lessonId, 
     setResult(null);
     setAnswer("");
     try {
-      const next = await api.nextPracticeQuestion(subjectCode, curriculumVersion, lessonId);
+      const next = await api.nextPracticeQuestion(subjectCode, curriculumVersion, lessonId, skillCode);
       setQuestion(next);
     } catch (reason) {
       setQuestion(null);

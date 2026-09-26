@@ -226,3 +226,15 @@ class ProgressResponse(BaseModel):
     skills: list[ProgressSkill]
     next_focus_skill: str | None = None
     last_activity_at: datetime | None = None
+
+
+class RecommendationResponse(BaseModel):
+    status: str
+    reason_code: str
+    message_ar: str
+    message_en: str
+    subject_code: str
+    curriculum_version: str
+    skill_code: str | None = None
+    skill_accuracy_percent: float | None = None
+    question: PracticeQuestionResponse

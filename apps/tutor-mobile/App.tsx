@@ -18,6 +18,7 @@ type RootStackParamList = {
     subjectCode: LessonSummary["subject_code"];
     curriculumVersion: string;
     lessonId?: string;
+    skillCode?: string;
   };
 };
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -38,7 +39,18 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home">
           {({ navigation }) => (
-            <HomeScreen api={api} onOpenLesson={(lesson) => navigation.navigate("Session", { lesson })} />
+            <HomeScreen
+              api={api}
+              onOpenLesson={(lesson) => navigation.navigate("Session", { lesson })}
+              onOpenPractice={(recommendation) =>
+                navigation.navigate("Practice", {
+                  subjectCode: recommendation.subject_code,
+                  curriculumVersion: recommendation.curriculum_version,
+                  lessonId: recommendation.question.lesson_id,
+                  skillCode: recommendation.skill_code ?? undefined,
+                })
+              }
+            />
           )}
         </Stack.Screen>
         <Stack.Screen name="Session">
@@ -64,6 +76,7 @@ export default function App() {
               subjectCode={route.params.subjectCode}
               curriculumVersion={route.params.curriculumVersion}
               lessonId={route.params.lessonId}
+              skillCode={route.params.skillCode}
               onBack={() => navigation.goBack()}
             />
           )}
