@@ -224,3 +224,10 @@ def message(
             next_action=next_action,
         ),
     )
+
+
+from app.products.tutor.diagnosis.router import router as diagnosis_router
+
+router.include_router(
+    diagnosis_router
+)
