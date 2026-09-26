@@ -231,3 +231,10 @@ from app.products.tutor.diagnosis.router import router as diagnosis_router
 router.include_router(
     diagnosis_router
 )
+
+
+from app.products.tutor.learning_path.router import router as learning_path_router
+
+router.include_router(
+    learning_path_router
+)
