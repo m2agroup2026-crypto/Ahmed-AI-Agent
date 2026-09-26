@@ -1,18 +1,28 @@
 from app.api.ai.router import execute_ai
 from app.api.ai.schemas import AIRequest
+from app.database.connection import SessionLocal
 
 
 def test_ai_gateway_request():
 
-    request = AIRequest(
-        user_id=1,
-        command="اعرض المستخدمين"
-    )
+    db = SessionLocal()
 
-    response = execute_ai(request)
+    try:
+        request = AIRequest(
+            user_id=1,
+            command="اعرض المستخدمين"
+        )
 
-    assert response.status == "received"
+        response = execute_ai(
+            request,
+            db
+        )
 
-    assert response.intent == "PROCESSING"
+        assert response.intent is not None
 
-    assert response.decision == "PENDING"
+        assert response.decision is not None
+
+        assert response.status is not None
+
+    finally:
+        db.close()

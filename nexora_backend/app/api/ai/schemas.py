@@ -1,18 +1,16 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class AIRequest(BaseModel):
 
-    user_id: int
+    model_config = ConfigDict(extra="forbid")
 
     command: str
-
+    user_id: int | None = None
 
 
 class AIResponse(BaseModel):
 
     intent: str
-
     decision: str
-
     status: str
