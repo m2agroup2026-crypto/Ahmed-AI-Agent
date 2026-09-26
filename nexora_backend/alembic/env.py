@@ -21,7 +21,18 @@ if config.config_file_name is not None:
 from app.database.base import Base
 from app.models import User, Role, Permission, RolePermission
 from app.billing.models import Plan, Subscription, CreditTransaction, UsageRecord, Wallet
-from app.products.tutor import LearnerProfile, LearningMessage, LearningSession
+from app.products.tutor import (
+    AssessmentAttempt,
+    CurriculumContentChunk,
+    CurriculumLesson,
+    CurriculumQuestion,
+    CurriculumSkill,
+    CurriculumSource,
+    CurriculumVersion,
+    LearnerProfile,
+    LearningMessage,
+    LearningSession,
+)
 
 target_metadata = Base.metadata
 

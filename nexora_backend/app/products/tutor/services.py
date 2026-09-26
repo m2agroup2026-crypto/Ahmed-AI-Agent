@@ -1,8 +1,10 @@
+from dataclasses import dataclass
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.models.user import User
-from app.products.tutor.curriculum import get_lesson, get_subject_lesson
+from app.products.tutor.content import ResolvedLesson, get_lesson, get_subject_lesson
 from app.products.tutor.models import LearnerProfile, LearningMessage, LearningSession
 from app.products.tutor.schemas import SUPPORTED_SUBJECTS, TutorProfileUpdate
 
@@ -68,18 +70,53 @@ def get_session(db: Session, user_id: int, session_id: str) -> LearningSession:
     return session
 
 
-def answer_from_curriculum(subject_code: str, lesson_id: str | None, locale: str) -> tuple[str, str | None, str | None]:
-    lesson = get_lesson(lesson_id) or get_subject_lesson(subject_code)
+@dataclass(frozen=True)
+class CurriculumAnswer:
+    status: str
+    content: str
+    lesson: ResolvedLesson | None = None
+    adaptation_mode: str = "standard"
+    next_action: str | None = None
+
+
+def answer_from_curriculum(
+    db: Session,
+    subject_code: str,
+    curriculum_version: str,
+    lesson_id: str | None,
+    locale: str,
+    profile: LearnerProfile | None = None,
+) -> CurriculumAnswer:
+    lesson = get_lesson(db, lesson_id, curriculum_version) or get_subject_lesson(
+        db, subject_code, curriculum_version
+    )
     if lesson is None:
-        return (
-            "needs_context",
-            "اختر درسًا من المنهج لأشرح لك محتواه." if locale.startswith("ar") else "Choose a curriculum lesson so I can explain it.",
-            None,
+        return CurriculumAnswer(
+            status="needs_context",
+            content=(
+                "اختر درسًا من المنهج لأشرح لك محتواه."
+                if locale.startswith("ar")
+                else "Choose a curriculum lesson so I can explain it."
+            ),
         )
 
-    content = lesson.summary_ar if locale.startswith("ar") else lesson.summary_en
-    title = lesson.title_ar if locale.startswith("ar") else lesson.title_en
-    return "curriculum_context", content, f"{lesson.id}:{title}"
+    preferences = (profile.learning_preferences if profile else {}) or {}
+    detail_level = preferences.get("detail_level", "standard")
+    if detail_level == "concise":
+        content = lesson.summary_ar if locale.startswith("ar") else lesson.summary_en
+        adaptation_mode = "concise"
+    else:
+        content = lesson.content_ar if locale.startswith("ar") else lesson.content_en
+        adaptation_mode = "standard"
+
+    next_action = "practice" if preferences.get("next_step", "practice") == "practice" else "continue"
+    return CurriculumAnswer(
+        status="curriculum_context",
+        content=content,
+        lesson=lesson,
+        adaptation_mode=adaptation_mode,
+        next_action=next_action,
+    )
 
 
 def append_message(
@@ -88,7 +125,18 @@ def append_message(
     content: str,
     lesson_id: str | None,
     locale: str,
-) -> tuple[LearningMessage, LearningMessage | None, str, str | None, str | None, str]:
+) -> tuple[
+    LearningMessage,
+    LearningMessage | None,
+    str,
+    str | None,
+    str | None,
+    str,
+    str | None,
+    str | None,
+    str,
+    str | None,
+]:
     learner_message = LearningMessage(
         session_id=session.id,
         role="learner",
@@ -98,16 +146,27 @@ def append_message(
     db.add(learner_message)
     db.flush()
 
-    answer_status, answer_content, source = answer_from_curriculum(session.subject_code, lesson_id, locale)
+    profile = db.query(LearnerProfile).filter(LearnerProfile.user_id == session.user_id).first()
+    answer = answer_from_curriculum(
+        db,
+        session.subject_code,
+        session.curriculum_version,
+        lesson_id,
+        locale,
+        profile,
+    )
     tutor_message = None
     source_lesson_id = None
     source_title = None
-    if source:
-        source_lesson_id, source_title = source.split(":", 1)
+    if answer.lesson:
+        source_lesson_id = answer.lesson.id
+        source_title = (
+            answer.lesson.title_ar if locale.startswith("ar") else answer.lesson.title_en
+        )
         tutor_message = LearningMessage(
             session_id=session.id,
             role="tutor",
-            content=answer_content,
+            content=answer.content,
             lesson_id=source_lesson_id,
         )
         db.add(tutor_message)
@@ -116,4 +175,15 @@ def append_message(
     db.refresh(learner_message)
     if tutor_message:
         db.refresh(tutor_message)
-    return learner_message, tutor_message, answer_status, source_lesson_id, source_title, answer_content
+    return (
+        learner_message,
+        tutor_message,
+        answer.status,
+        source_lesson_id,
+        source_title,
+        answer.content,
+        answer.lesson.source_url if answer.lesson else None,
+        answer.lesson.source_locator if answer.lesson else None,
+        answer.adaptation_mode,
+        answer.next_action,
+    )

@@ -83,9 +83,18 @@ identity service. It currently provides:
 - ownership-scoped learning sessions;
 - curriculum-scoped message exchange with an explicit `needs_context` state.
 
-Tutor tables are included in the initial Alembic migration. The mobile and web
+Tutor tables are included in the Alembic migration chain. The mobile and web
 shells live under `apps/tutor-mobile` and `apps/tutor-web` and consume the
 shared contracts under `packages/contracts`.
+
+The curriculum read path prefers published lessons imported from an active
+official source with approved rights. Until the first approved bundle is
+loaded, the three foundation lessons remain available as clearly marked
+fixtures so the learner loop can be exercised without presenting them as
+official material. Platform administrators can import a versioned bundle via
+`POST /api/v1/tutor/curriculum/import` (protected by `dashboard.manage`).
+Every lesson response and curriculum-grounded answer includes provenance when
+it comes from an imported source.
 
 
 ---

@@ -5,9 +5,9 @@ import type { LessonSummary } from "@contracts/tutor";
 import { TutorApi } from "../api/client";
 import { theme } from "../theme";
 
-type Props = { api: TutorApi; lesson: LessonSummary; onBack: () => void };
+type Props = { api: TutorApi; lesson: LessonSummary; onBack: () => void; onPractice: () => void };
 
-export function TutorSessionScreen({ api, lesson, onBack }: Props) {
+export function TutorSessionScreen({ api, lesson, onBack, onPractice }: Props) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState<string | null>(null);
@@ -48,6 +48,9 @@ export function TutorSessionScreen({ api, lesson, onBack }: Props) {
         <View style={styles.lessonCard}>
           <Text style={styles.lessonLabel}>ملخص الدرس</Text>
           <Text style={styles.lessonText}>{lesson.summary_ar}</Text>
+          <Pressable style={styles.practiceButton} onPress={onPractice}>
+            <Text style={styles.practiceButtonText}>تدرّب على الدرس</Text>
+          </Pressable>
         </View>
         {answer && (
           <View style={styles.answerCard}>
@@ -94,4 +97,6 @@ const styles = StyleSheet.create({
   input: { flex: 1, minHeight: 48, maxHeight: 110, backgroundColor: theme.colors.surface, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10, color: theme.colors.ink },
   send: { backgroundColor: theme.colors.teal, borderRadius: 14, minWidth: 64, height: 48, justifyContent: "center", alignItems: "center", marginRight: 8 },
   sendText: { color: theme.colors.white, fontWeight: "800" },
+  practiceButton: { backgroundColor: theme.colors.navy, borderRadius: 14, minHeight: 48, alignItems: "center", justifyContent: "center", marginTop: 18 },
+  practiceButtonText: { color: theme.colors.white, fontWeight: "800" },
 });

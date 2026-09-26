@@ -20,6 +20,12 @@ export interface LessonSummary {
   summary_en: string;
   skill_codes: string[];
   curriculum_version: string;
+  source_id?: string | null;
+  source_name_ar?: string | null;
+  source_name_en?: string | null;
+  source_url?: string | null;
+  source_locator?: string | null;
+  source_status?: string | null;
 }
 
 export interface TutorSession {
@@ -48,7 +54,40 @@ export interface TutorMessageExchange {
     content: string;
     source_lesson_id: string | null;
     source_title: string | null;
+    source_url?: string | null;
+    source_locator?: string | null;
+    adaptation_mode?: "standard" | "concise" | string;
+    next_action?: "practice" | "continue" | string | null;
   };
+}
+
+export interface PracticeQuestion {
+  id: string;
+  lesson_id: string;
+  subject_code: TutorSubject;
+  skill_code: string | null;
+  question_type: string;
+  prompt_ar: string;
+  prompt_en: string;
+  choices_ar: string[];
+  choices_en: string[];
+  curriculum_version: string;
+  source_url: string;
+  source_locator: string;
+  source_status: string;
+}
+
+export interface PracticeAttemptResult {
+  attempt_id: string;
+  question_id: string;
+  is_correct: boolean;
+  score: number;
+  max_score: number;
+  explanation_ar: string;
+  explanation_en: string;
+  source_url: string;
+  source_locator: string;
+  next_action: "continue" | "review" | string;
 }
 
 export type TutorSessionMessage = TutorMessage;

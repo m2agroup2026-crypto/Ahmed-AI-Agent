@@ -9,8 +9,17 @@ import { TutorApi } from "./src/api/client";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { LoginScreen } from "./src/screens/LoginScreen";
 import { TutorSessionScreen } from "./src/screens/TutorSessionScreen";
+import { PracticeScreen } from "./src/screens/PracticeScreen";
 
-type RootStackParamList = { Home: undefined; Session: { lesson: LessonSummary } };
+type RootStackParamList = {
+  Home: undefined;
+  Session: { lesson: LessonSummary };
+  Practice: {
+    subjectCode: LessonSummary["subject_code"];
+    curriculumVersion: string;
+    lessonId?: string;
+  };
+};
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
@@ -34,7 +43,29 @@ export default function App() {
         </Stack.Screen>
         <Stack.Screen name="Session">
           {({ route, navigation }) => (
-            <TutorSessionScreen api={api} lesson={route.params.lesson} onBack={() => navigation.goBack()} />
+            <TutorSessionScreen
+              api={api}
+              lesson={route.params.lesson}
+              onBack={() => navigation.goBack()}
+              onPractice={() =>
+                navigation.navigate("Practice", {
+                  subjectCode: route.params.lesson.subject_code,
+                  curriculumVersion: route.params.lesson.curriculum_version,
+                  lessonId: route.params.lesson.id,
+                })
+              }
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="Practice">
+          {({ route, navigation }) => (
+            <PracticeScreen
+              api={api}
+              subjectCode={route.params.subjectCode}
+              curriculumVersion={route.params.curriculumVersion}
+              lessonId={route.params.lessonId}
+              onBack={() => navigation.goBack()}
+            />
           )}
         </Stack.Screen>
       </Stack.Navigator>

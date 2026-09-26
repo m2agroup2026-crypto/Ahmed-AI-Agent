@@ -1,5 +1,7 @@
 import type {
   LessonSummary,
+  PracticeAttemptResult,
+  PracticeQuestion,
   TutorMessageExchange,
   TutorSessionMessage,
   TutorProfile,
@@ -37,8 +39,11 @@ export class TutorApi {
     return response.json() as Promise<T>;
   }
 
-  lessons(subjectCode?: TutorSubject) {
-    const query = subjectCode ? `?subject_code=${encodeURIComponent(subjectCode)}` : "";
+  lessons(subjectCode?: TutorSubject, curriculumVersion?: string) {
+    const params = new URLSearchParams();
+    if (subjectCode) params.set("subject_code", subjectCode);
+    if (curriculumVersion) params.set("curriculum_version", curriculumVersion);
+    const query = params.toString() ? `?${params.toString()}` : "";
     return this.request<LessonSummary[]>(`/api/v1/tutor/lessons${query}`);
   }
 
@@ -58,10 +63,42 @@ export class TutorApi {
     });
   }
 
-  startSession(subject_code: TutorSubject) {
+  startSession(subject_code: TutorSubject, curriculum_version = "egypt-secondary-2026") {
     return this.request<TutorSession>("/api/v1/tutor/sessions", {
       method: "POST",
-      body: JSON.stringify({ subject_code }),
+      body: JSON.stringify({ subject_code, curriculum_version }),
+    });
+  }
+
+  nextPracticeQuestion(
+    subjectCode: TutorSubject,
+    curriculumVersion = "egypt-secondary-2026",
+    lessonId?: string,
+    skillCode?: string,
+  ) {
+    const params = new URLSearchParams({
+      subject_code: subjectCode,
+      curriculum_version: curriculumVersion,
+    });
+    if (lessonId) params.set("lesson_id", lessonId);
+    if (skillCode) params.set("skill_code", skillCode);
+    return this.request<PracticeQuestion>(`/api/v1/tutor/practice/next?${params.toString()}`);
+  }
+
+  submitPracticeAttempt(
+    questionId: string,
+    submittedAnswer: string,
+    locale = "ar-EG",
+    sessionId?: string,
+  ) {
+    return this.request<PracticeAttemptResult>("/api/v1/tutor/practice/attempts", {
+      method: "POST",
+      body: JSON.stringify({
+        question_id: questionId,
+        submitted_answer: submittedAnswer,
+        locale,
+        session_id: sessionId,
+      }),
     });
   }
 
