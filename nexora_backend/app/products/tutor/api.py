@@ -238,3 +238,10 @@ from app.products.tutor.learning_path.router import router as learning_path_rout
 router.include_router(
     learning_path_router
 )
+
+
+from app.products.tutor.teaching_reasoning.router import router as teaching_reasoning_router
+
+router.include_router(
+    teaching_reasoning_router
+)
