@@ -2,6 +2,7 @@ import type {
   LessonSummary,
   PracticeAttemptResult,
   PracticeQuestion,
+  TutorProgress,
   TutorMessageExchange,
   TutorSessionMessage,
   TutorProfile,
@@ -49,6 +50,14 @@ export class TutorApi {
 
   profile() {
     return this.request<TutorProfile>("/api/v1/tutor/profile");
+  }
+
+  progress(subjectCode?: TutorSubject, curriculumVersion?: string) {
+    const params = new URLSearchParams();
+    if (subjectCode) params.set("subject_code", subjectCode);
+    if (curriculumVersion) params.set("curriculum_version", curriculumVersion);
+    const query = params.toString() ? `?${params.toString()}` : "";
+    return this.request<TutorProgress>(`/api/v1/tutor/progress${query}`);
   }
 
   saveProfile(payload: {

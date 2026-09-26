@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import type { LessonSummary, TutorSubject } from "@contracts/tutor";
+import type { LessonSummary, TutorProgress, TutorSubject } from "@contracts/tutor";
 import { TutorApi } from "../api/client";
 import { theme } from "../theme";
 
@@ -12,14 +12,18 @@ type Props = {
 
 export function HomeScreen({ api, onOpenLesson }: Props) {
   const [lessons, setLessons] = useState<LessonSummary[]>([]);
+  const [progress, setProgress] = useState<TutorProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
-    api
-      .lessons()
-      .then((items) => active && setLessons(items))
+    Promise.all([api.lessons(), api.progress()])
+      .then(([items, learnerProgress]) => {
+        if (!active) return;
+        setLessons(items);
+        setProgress(learnerProgress);
+      })
       .catch((reason: Error) => active && setError(reason.message))
       .finally(() => active && setLoading(false));
     return () => {
@@ -42,6 +46,23 @@ export function HomeScreen({ api, onOpenLesson }: Props) {
         </View>
         <Text style={styles.liveLabel}>LIVE CURRICULUM</Text>
       </View>
+
+      {progress && (
+        <View style={styles.progressCard}>
+          <View style={styles.progressCopy}>
+            <Text style={styles.progressLabel}>تقدّمك الحقيقي</Text>
+            <Text style={styles.progressTitle}>{progress.attempts} محاولات محفوظة</Text>
+            <Text style={styles.progressHint}>
+              {progress.attempts > 0
+                ? `دقة الإجابات ${progress.accuracy_percent}%`
+                : "ابدأ أول تدريب ليظهر تقدّمك هنا"}
+            </Text>
+          </View>
+          <View style={styles.progressRing}>
+            <Text style={styles.progressValue}>{Math.round(progress.accuracy_percent)}%</Text>
+          </View>
+        </View>
+      )}
 
       {loading && <ActivityIndicator color={theme.colors.teal} size="large" />}
       {error && <Text style={styles.error}>{error}</Text>}
@@ -93,4 +114,11 @@ const styles = StyleSheet.create({
   arrow: { color: theme.colors.gold, fontSize: 28, marginLeft: 8 },
   error: { color: theme.colors.danger, textAlign: "right", lineHeight: 22 },
   empty: { color: theme.colors.muted, textAlign: "right", paddingVertical: 30 },
+  progressCard: { backgroundColor: "#e7f5f2", borderRadius: 22, padding: 18, marginBottom: 22, flexDirection: "row-reverse", alignItems: "center" },
+  progressCopy: { flex: 1 },
+  progressLabel: { color: theme.colors.teal, fontSize: 12, fontWeight: "800", textAlign: "right" },
+  progressTitle: { color: theme.colors.ink, fontSize: 18, fontWeight: "800", textAlign: "right", marginTop: 5 },
+  progressHint: { color: theme.colors.muted, fontSize: 13, textAlign: "right", marginTop: 5 },
+  progressRing: { width: 66, height: 66, borderRadius: 33, borderWidth: 6, borderColor: theme.colors.gold, justifyContent: "center", alignItems: "center", marginLeft: 14 },
+  progressValue: { color: theme.colors.ink, fontSize: 15, fontWeight: "800" },
 });

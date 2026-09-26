@@ -90,4 +90,26 @@ export interface PracticeAttemptResult {
   next_action: "continue" | "review" | string;
 }
 
+export interface ProgressSkill {
+  skill_code: string;
+  attempts: number;
+  correct_answers: number;
+  score: number;
+  max_score: number;
+  accuracy_percent: number;
+}
+
+export interface TutorProgress {
+  curriculum_version: string | null;
+  subject_code: TutorSubject | null;
+  attempts: number;
+  correct_answers: number;
+  score: number;
+  max_score: number;
+  accuracy_percent: number;
+  skills: ProgressSkill[];
+  next_focus_skill: string | null;
+  last_activity_at: string | null;
+}
+
 export type TutorSessionMessage = TutorMessage;

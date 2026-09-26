@@ -9,6 +9,7 @@ from app.products.tutor.content import list_lessons
 from app.products.tutor.importer import import_curriculum_bundle
 from app.products.tutor.models import AssessmentAttempt, CurriculumLesson
 from app.products.tutor.practice import get_next_question, submit_attempt
+from app.products.tutor.progress import get_progress
 from app.products.tutor.schemas import CurriculumImportPayload
 from app.models.user import User
 
@@ -136,6 +137,14 @@ def test_practice_question_is_source_grounded_and_attempt_is_scored(db):
     assert correct.score == 2
     assert correct.next_action == "continue"
     assert db.query(AssessmentAttempt).count() == 2
+
+    progress = get_progress(db, 1, "egypt-secondary-2026", "mathematics")
+    assert progress["attempts"] == 2
+    assert progress["correct_answers"] == 1
+    assert progress["score"] == 2
+    assert progress["max_score"] == 4
+    assert progress["accuracy_percent"] == 50.0
+    assert progress["next_focus_skill"] == "math.linear-equations"
 
 
 def test_unapproved_source_cannot_publish_content(db):

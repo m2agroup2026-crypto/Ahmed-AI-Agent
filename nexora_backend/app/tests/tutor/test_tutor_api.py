@@ -269,3 +269,10 @@ def test_practice_api_returns_question_and_persists_attempt(practice_client):
     assert body["is_correct"] is True
     assert body["score"] == 1
     assert body["next_action"] == "continue"
+
+    progress_response = practice_client.get("/api/v1/tutor/progress")
+    assert progress_response.status_code == 200
+    progress = progress_response.json()
+    assert progress["attempts"] == 1
+    assert progress["correct_answers"] == 1
+    assert progress["accuracy_percent"] == 100.0

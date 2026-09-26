@@ -204,3 +204,25 @@ class PracticeAttemptResponse(BaseModel):
     source_url: str
     source_locator: str
     next_action: str
+
+
+class ProgressSkill(BaseModel):
+    skill_code: str
+    attempts: int
+    correct_answers: int
+    score: int
+    max_score: int
+    accuracy_percent: float
+
+
+class ProgressResponse(BaseModel):
+    curriculum_version: str | None = None
+    subject_code: str | None = None
+    attempts: int
+    correct_answers: int
+    score: int
+    max_score: int
+    accuracy_percent: float
+    skills: list[ProgressSkill]
+    next_focus_skill: str | None = None
+    last_activity_at: datetime | None = None
