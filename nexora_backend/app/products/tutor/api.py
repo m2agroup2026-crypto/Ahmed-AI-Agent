@@ -259,3 +259,10 @@ from app.products.tutor.personality.router import router as personality_router
 router.include_router(
     personality_router
 )
+
+
+from app.products.tutor.memory.router import router as memory_router
+
+router.include_router(
+    memory_router
+)
