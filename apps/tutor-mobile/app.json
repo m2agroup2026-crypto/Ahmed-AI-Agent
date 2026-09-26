@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Nexora Tutor",
+    "slug": "nexora-tutor",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "nexora-tutor",
+    "assetBundlePatterns": ["**/*"]
+  }
+}

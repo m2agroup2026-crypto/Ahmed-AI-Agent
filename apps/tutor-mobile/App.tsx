@@ -1,0 +1,43 @@
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { StatusBar } from "expo-status-bar";
+import { useMemo } from "react";
+import { useState } from "react";
+
+import type { LessonSummary } from "@contracts/tutor";
+import { TutorApi } from "./src/api/client";
+import { HomeScreen } from "./src/screens/HomeScreen";
+import { LoginScreen } from "./src/screens/LoginScreen";
+import { TutorSessionScreen } from "./src/screens/TutorSessionScreen";
+
+type RootStackParamList = { Home: undefined; Session: { lesson: LessonSummary } };
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+export default function App() {
+  // Authentication UI is intentionally supplied by the shared Nexora identity flow.
+  // The shell receives a token through the environment until the login screen lands.
+  const [token, setToken] = useState(process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? "");
+  const api = useMemo(() => new TutorApi(token), [token]);
+
+  if (!token) {
+    return <LoginScreen onLogin={setToken} />;
+  }
+
+  return (
+    <NavigationContainer>
+      <StatusBar style="light" />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Home">
+          {({ navigation }) => (
+            <HomeScreen api={api} onOpenLesson={(lesson) => navigation.navigate("Session", { lesson })} />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="Session">
+          {({ route, navigation }) => (
+            <TutorSessionScreen api={api} lesson={route.params.lesson} onBack={() => navigation.goBack()} />
+          )}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}

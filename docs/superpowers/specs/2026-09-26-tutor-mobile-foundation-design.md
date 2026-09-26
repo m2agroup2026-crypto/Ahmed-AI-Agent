@@ -1,6 +1,6 @@
 # Tutor Mobile Foundation — Design Specification
 
-**Status:** Design approved for review; implementation has not started.
+**Status:** Approved; foundation implementation in progress.
 **Date:** 2026-09-26
 **Product:** Nexora Tutor AI
 
@@ -131,4 +131,3 @@ Operational checks include structured audit events, latency/error metrics, and a
 4. Add deterministic practice/progress and offline synchronization.
 5. Add voice provider abstraction and guardian web read-only progress.
 6. Run security, contract, and mobile/web production checks before expanding curriculum.
-

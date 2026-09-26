@@ -72,6 +72,25 @@ Goals:
 ---
 
 
+## Tutor foundation
+
+The first product slice is Nexora Tutor for secondary learners. The Tutor API
+is mounted under `/api/v1/tutor` and requires a bearer token from the shared
+identity service. It currently provides:
+
+- versioned curriculum lesson summaries;
+- learner profile creation and retrieval;
+- ownership-scoped learning sessions;
+- curriculum-scoped message exchange with an explicit `needs_context` state.
+
+Tutor tables are included in the initial Alembic migration. The mobile and web
+shells live under `apps/tutor-mobile` and `apps/tutor-web` and consume the
+shared contracts under `packages/contracts`.
+
+
+---
+
+
 ## Main Modules
 
 
