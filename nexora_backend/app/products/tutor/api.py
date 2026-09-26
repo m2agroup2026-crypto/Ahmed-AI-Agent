@@ -252,3 +252,10 @@ from app.products.tutor.adaptive_loop.router import router as adaptive_loop_rout
 router.include_router(
     adaptive_loop_router
 )
+
+
+from app.products.tutor.personality.router import router as personality_router
+
+router.include_router(
+    personality_router
+)
