@@ -266,3 +266,10 @@ from app.products.tutor.memory.router import router as memory_router
 router.include_router(
     memory_router
 )
+
+
+from app.products.tutor.context.router import router as context_router
+
+router.include_router(
+    context_router
+)
