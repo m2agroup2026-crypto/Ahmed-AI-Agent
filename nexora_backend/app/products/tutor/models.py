@@ -250,3 +250,55 @@ class LearningMessage(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
     session: Mapped[LearningSession] = relationship(back_populates="messages")
+
+
+class Student(Base):
+    """Nexora student evolution profile."""
+
+    __tablename__ = "students"
+
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        index=True,
+    )
+
+    external_id: Mapped[str] = mapped_column(
+        String(100),
+        unique=True,
+        nullable=False,
+    )
+
+    display_name: Mapped[str] = mapped_column(
+        String(150),
+        nullable=False,
+    )
+
+    current_level: Mapped[str] = mapped_column(
+        String(50),
+        default="explorer",
+        nullable=False,
+    )
+
+    mastery_score: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    xp_points: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+    )
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        onupdate=utc_now,
+    )

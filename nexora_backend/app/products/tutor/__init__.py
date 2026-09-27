@@ -11,6 +11,7 @@ from app.products.tutor.models import (
     LearnerProfile,
     LearningMessage,
     LearningSession,
+    Student,
 )
 
 __all__ = [
@@ -23,4 +24,5 @@ __all__ = [
     "LearnerProfile",
     "LearningMessage",
     "LearningSession",
+    "Student",
 ]
