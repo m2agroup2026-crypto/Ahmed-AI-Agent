@@ -273,3 +273,10 @@ from app.products.tutor.context.router import router as context_router
 router.include_router(
     context_router
 )
+
+
+from app.products.tutor.response.router import router as response_router
+
+router.include_router(
+    response_router
+)
