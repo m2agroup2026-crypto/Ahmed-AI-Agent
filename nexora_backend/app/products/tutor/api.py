@@ -280,3 +280,10 @@ from app.products.tutor.response.router import router as response_router
 router.include_router(
     response_router
 )
+
+
+from app.products.tutor.orchestration.router import router as orchestration_router
+
+router.include_router(
+    orchestration_router
+)
