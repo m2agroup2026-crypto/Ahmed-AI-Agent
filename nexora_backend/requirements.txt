@@ -15,6 +15,7 @@ h11==0.16.0
 idna==3.19
 passlib==1.7.4
 pillow==12.3.0
+psycopg[binary]==3.3.6
 pyasn1==0.6.4
 pycparser==3.0
 pydantic==2.13.5
