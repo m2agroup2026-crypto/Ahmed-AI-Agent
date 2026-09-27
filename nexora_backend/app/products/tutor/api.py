@@ -287,3 +287,10 @@ from app.products.tutor.orchestration.router import router as orchestration_rout
 router.include_router(
     orchestration_router
 )
+
+
+from app.products.tutor.cognitive_loop.router import router as cognitive_loop_router
+
+router.include_router(
+    cognitive_loop_router
+)
