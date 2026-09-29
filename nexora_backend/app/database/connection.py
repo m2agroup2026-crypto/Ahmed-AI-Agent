@@ -15,11 +15,17 @@ engine_kwargs = {
 }
 
 
-# SQLite requires check_same_thread=False for FastAPI usage.
-# PostgreSQL does not support this SQLite-specific argument.
+# SQLite configuration for local development.
 if DATABASE_URL.startswith("sqlite"):
     engine_kwargs["connect_args"] = {
         "check_same_thread": False,
+    }
+
+# PostgreSQL configuration.
+# Azure Database for PostgreSQL requires secure TLS/SSL connections.
+elif DATABASE_URL.startswith("postgresql"):
+    engine_kwargs["connect_args"] = {
+        "sslmode": "require",
     }
 
 
