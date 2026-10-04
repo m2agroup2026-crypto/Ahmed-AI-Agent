@@ -10,6 +10,7 @@ from app.core.database.config import database_config
 
 from app.database.base import Base
 from app.models import User, Role, Permission, RolePermission
+
 from app.billing.models import (
     Plan,
     Subscription,
@@ -17,6 +18,7 @@ from app.billing.models import (
     UsageRecord,
     Wallet,
 )
+
 from app.products.tutor import (
     AssessmentAttempt,
     CurriculumContentChunk,
@@ -28,11 +30,27 @@ from app.products.tutor import (
     LearnerProfile,
     LearningMessage,
     LearningSession,
+    Student,
+)
+
+from app.products.tutor.evolution.models import (
+    LearningEvent,
+    LearningProfile,
+    MasteryRecord,
+    StudentWallet,
+)
+
+from app.products.tutor.teachers.models import (
+    Booking,
+    TeacherAvailability,
+    TeacherProfile,
+    TeacherSubject,
 )
 
 
 # Alembic Config object.
 config = context.config
+
 
 NEXORA_DATABASE_URL = (
     f"postgresql://{database_config.USER}:"
@@ -41,6 +59,7 @@ NEXORA_DATABASE_URL = (
     f"{database_config.PORT}/"
     f"{database_config.NAME}"
 )
+
 
 config.set_main_option(
     "sqlalchemy.url",
