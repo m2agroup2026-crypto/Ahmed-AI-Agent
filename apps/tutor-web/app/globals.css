@@ -1,0 +1,42 @@
+:root {
+  --navy: #0b1d35;
+  --ink: #10233f;
+  --teal: #178b88;
+  --gold: #d6a84f;
+  --surface: #f5f8fb;
+  --muted: #6d7b91;
+  --line: #dce5ee;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--surface); color: var(--ink); font-family: Arial, "Noto Sans Arabic", sans-serif; }
+.shell { max-width: 1180px; margin: 0 auto; padding: 36px 24px 72px; }
+.topbar, .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+.topbar { padding-bottom: 30px; }
+h1, h2, h3, h4, p { margin: 0; }
+h1 { font-size: clamp(28px, 4vw, 46px); margin-top: 12px; }
+h2 { font-size: clamp(28px, 4vw, 54px); line-height: 1.15; max-width: 660px; margin-top: 18px; }
+h3 { font-size: 30px; margin-top: 10px; }
+h4 { font-size: 22px; margin-top: 12px; }
+.eyebrow { color: var(--navy); font-size: 11px; font-weight: 800; letter-spacing: .16em; }
+.gold { color: var(--gold); }
+.teal { color: var(--teal); }
+.status, .hint, .version { color: var(--muted); font-size: 13px; }
+.status { border: 1px solid var(--line); border-radius: 999px; padding: 10px 14px; background: white; }
+.hero { display: flex; align-items: center; justify-content: space-between; gap: 32px; background: var(--navy); color: white; border-radius: 28px; padding: clamp(28px, 5vw, 58px); min-height: 300px; overflow: hidden; }
+.hero p { color: #c8d5e5; font-size: 17px; line-height: 1.8; max-width: 650px; margin-top: 18px; }
+.hero-mark { display: grid; place-items: center; width: 150px; height: 150px; border: 1px solid rgba(214,168,79,.7); border-radius: 50%; color: var(--gold); font-size: 78px; font-weight: 800; }
+.section { margin-top: 48px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 22px; }
+.lesson-card { background: white; border: 1px solid var(--line); border-radius: 20px; padding: 24px; min-height: 220px; box-shadow: 0 12px 32px rgba(16,35,63,.06); }
+.subject { color: var(--teal); font-weight: 800; font-size: 13px; }
+.lesson-card p { color: var(--muted); line-height: 1.8; margin-top: 12px; }
+.version { display: inline-block; margin-top: 24px; }
+.empty { border: 1px dashed var(--line); border-radius: 18px; padding: 34px; margin-top: 22px; color: var(--muted); background: white; text-align: center; }
+.empty.danger { color: #a64545; }
+@media (max-width: 760px) {
+  .shell { padding: 24px 16px 48px; }
+  .topbar, .section-heading, .hero { align-items: flex-start; flex-direction: column; }
+  .hero-mark { width: 86px; height: 86px; font-size: 42px; }
+  .grid { grid-template-columns: 1fr; }
+}

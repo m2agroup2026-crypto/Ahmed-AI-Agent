@@ -1,4 +1,4 @@
-from app.ai.core.agent import NexoraAgent
+from app.ai.core.fabric import IntelligenceFabric
 from app.ai.governance.audit import AuditLogger, AuditRecord
 from app.ai.billing.action_mapper import map_action
 from app.ai.integration.billing_adapter import BillingAdapter
@@ -9,7 +9,7 @@ class NexoraOrchestrator:
 
     def __init__(self):
 
-        self.agent = NexoraAgent()
+        self.fabric = IntelligenceFabric()
 
         self.audit = AuditLogger()
 
@@ -23,7 +23,10 @@ class NexoraOrchestrator:
         text: str
     ):
 
-        result = self.agent.process(
+        agent = self.fabric.resolve_agent()
+
+
+        result = agent.process(
             db,
             user_id,
             text

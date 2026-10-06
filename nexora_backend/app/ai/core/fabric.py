@@ -1,3 +1,4 @@
+from app.ai.agents import registry
 from app.ai.governance.audit import AuditLogger, AuditRecord
 from app.ai.command_center.metrics import MetricsCollector
 
@@ -10,6 +11,16 @@ class IntelligenceFabric:
         self.audit = AuditLogger()
 
         self.metrics = MetricsCollector()
+
+
+    def resolve_agent(
+        self,
+        agent_name: str = "general"
+    ):
+
+        return registry.get(
+            agent_name
+        )
 
 
     def process(

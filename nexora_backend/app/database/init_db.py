@@ -17,6 +17,20 @@ from app.billing.models import (
     Wallet,
 )
 
+# Register Tutor product models with SQLAlchemy metadata.
+from app.products.tutor import (
+    AssessmentAttempt,
+    CurriculumContentChunk,
+    CurriculumLesson,
+    CurriculumQuestion,
+    CurriculumSkill,
+    CurriculumSource,
+    CurriculumVersion,
+    LearnerProfile,
+    LearningMessage,
+    LearningSession,
+)
+
 
 def create_tables():
     Base.metadata.create_all(
