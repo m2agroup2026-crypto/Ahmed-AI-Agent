@@ -2,7 +2,7 @@ from app.ai.providers.azure_foundry import AzureFoundryProvider
 
 
 class ModelGateway:
-    """Provider-neutral gateway for NEXORA model inference."""
+    """Provider-independent gateway for NEXORA model inference."""
 
     def __init__(self, provider=None):
         self.provider = provider or AzureFoundryProvider()
