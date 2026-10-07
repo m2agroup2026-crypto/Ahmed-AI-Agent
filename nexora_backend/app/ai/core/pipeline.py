@@ -5,13 +5,15 @@ from app.ai.billing.action_costs import get_action_cost
 from app.ai.middleware.billing_middleware import BillingMiddleware
 from app.ai.decision.engine import DecisionEngine
 from app.ai.memory.events import EventLogger, AIEvent
+from app.ai.gateway import ModelGateway
 
 
 class AgentPipeline:
 
     def __init__(
         self,
-        billing_middleware=None
+        billing_middleware=None,
+        gateway=None
     ):
 
         self.decision_engine = DecisionEngine()
@@ -20,6 +22,11 @@ class AgentPipeline:
         self.billing = (
             billing_middleware
             or BillingMiddleware()
+        )
+
+        self.gateway = (
+            gateway
+            or ModelGateway()
         )
 
     def run(
@@ -84,9 +91,17 @@ class AgentPipeline:
         else:
             billing_result = None
 
+        model_output = None
+
+        if state.intent == "GENERAL_QUERY":
+            model_output = self.gateway.generate(
+                state.input_text
+            )
+
         return {
             "state": state,
             "decision": decision,
             "billing": billing_result,
+            "model_output": model_output,
             "events": self.event_logger.all()
         }
