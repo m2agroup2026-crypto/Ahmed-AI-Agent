@@ -19,5 +19,15 @@ class Settings:
 
     ALGORITHM = "HS256"
 
+    AZURE_FOUNDRY_ENDPOINT = os.getenv(
+        "AZURE_FOUNDRY_ENDPOINT",
+        "https://nexora-foundry-dev.services.ai.azure.com/openai/v1"
+    )
+
+    AZURE_FOUNDRY_DEPLOYMENT = os.getenv(
+        "AZURE_FOUNDRY_DEPLOYMENT",
+        "gpt-5-mini"
+    )
+
 
 settings = Settings()
