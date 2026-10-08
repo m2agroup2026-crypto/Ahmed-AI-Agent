@@ -1,3 +1,6 @@
+from datetime import UTC, datetime, timedelta
+from unittest.mock import Mock
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -9,11 +12,16 @@ from app.database.base import Base
 from app.database.dependencies import get_db
 from app.main import app
 from app.models.user import User
+from app.config.settings import settings
+from app.products.tutor.api import get_tutor_gateway
+from app.security.jwt import create_access_token
+from jose import jwt
 from app.products.tutor.models import (
     CurriculumLesson,
     CurriculumQuestion,
     CurriculumSource,
     CurriculumVersion,
+    LearningMessage,
 )
 
 
@@ -42,9 +50,14 @@ def client():
 
     app.dependency_overrides[get_db] = override_db
     app.dependency_overrides[get_current_user_id] = lambda: user.id
+    gateway = Mock()
+    gateway.generate.return_value = "شرح تعليمي مولد للاختبار"
+    app.dependency_overrides[get_tutor_gateway] = lambda: gateway
 
     try:
         with TestClient(app) as test_client:
+            test_client.tutor_gateway = gateway
+            test_client.tutor_db = db
             yield test_client
     finally:
         app.dependency_overrides.clear()
@@ -180,6 +193,11 @@ def test_student_can_create_profile_session_and_curriculum_message(client):
     assert body["answer"]["adaptation_mode"] == "standard"
     assert body["answer"]["next_action"] == "practice"
     assert body["tutor_message"]["role"] == "tutor"
+    assert body["answer"]["content"] == body["tutor_message"]["content"] == client.tutor_gateway.generate.return_value
+    client.tutor_gateway.generate.assert_called_once()
+    messages = client.get(f"/api/v1/tutor/sessions/{session_id}/messages").json()
+    assert [message["role"] for message in messages] == ["learner", "tutor"]
+    assert messages[1]["content"] == body["answer"]["content"]
 
 
 def test_unknown_subject_is_rejected(client):
@@ -202,6 +220,109 @@ def test_session_is_not_visible_to_another_authenticated_user(client):
     response = client.get(f"/api/v1/tutor/sessions/{session_id}")
 
     assert response.status_code == 404
+
+
+def _message_session(client):
+    return client.post("/api/v1/tutor/sessions", json={"subject_code": "mathematics"}).json()["id"]
+
+
+def _use_jwt(client, user_id=1):
+    app.dependency_overrides.pop(get_current_user_id, None)
+    client.headers["Authorization"] = "Bearer " + create_access_token({"user_id": user_id})
+
+
+def test_message_uses_jwt_identity_and_ignores_client_user_id(client):
+    session_id = _message_session(client)
+    _use_jwt(client)
+    response = client.post(
+        f"/api/v1/tutor/sessions/{session_id}/messages",
+        json={"content": "How do I solve x + 2 = 5?", "user_id": 2, "locale": "en-US"},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["answer"]["content"] == body["tutor_message"]["content"]
+    assert body["learner_message"]["content"] == "How do I solve x + 2 = 5?"
+    client.tutor_gateway.generate.assert_called_once()
+    prompt = client.tutor_gateway.generate.call_args.args[0]
+    assert "How do I solve x + 2 = 5?" in prompt
+    assert "mathematics" in prompt and "egypt-secondary-2026" in prompt
+    assert "Respond in English" in prompt
+    assert client.tutor_db.query(LearningMessage).count() == 2
+
+
+@pytest.mark.parametrize("token_kind", ["missing", "invalid", "expired"])
+def test_message_rejects_bad_jwt_without_inference(client, token_kind):
+    session_id = _message_session(client)
+    app.dependency_overrides.pop(get_current_user_id, None)
+    if token_kind == "invalid":
+        client.headers["Authorization"] = "Bearer invalid-token"
+    elif token_kind == "expired":
+        token = jwt.encode(
+            {"user_id": 1, "exp": datetime.now(UTC) - timedelta(minutes=1)},
+            settings.SECRET_KEY, algorithm=settings.ALGORITHM,
+        )
+        client.headers["Authorization"] = "Bearer " + token
+    response = client.post(f"/api/v1/tutor/sessions/{session_id}/messages", json={"content": "Explain"})
+    assert response.status_code == 401
+    client.tutor_gateway.generate.assert_not_called()
+    assert client.tutor_db.query(LearningMessage).count() == 0
+
+
+@pytest.mark.parametrize("case", ["foreign", "missing", "inactive", "missing_user"])
+def test_message_checks_user_and_session_before_inference(client, case):
+    session_id = _message_session(client)
+    if case == "inactive":
+        client.tutor_db.get(User, 1).is_active = False
+        client.tutor_db.commit()
+    _use_jwt(client, 2 if case == "foreign" else 999 if case == "missing_user" else 1)
+    if case == "missing":
+        session_id = "nonexistent-session"
+    response = client.post(
+        f"/api/v1/tutor/sessions/{session_id}/messages",
+        json={"content": "Explain", "user_id": 1},
+    )
+    assert response.status_code == (401 if case in {"inactive", "missing_user"} else 404)
+    client.tutor_gateway.generate.assert_not_called()
+    assert client.tutor_db.query(LearningMessage).count() == 0
+
+
+@pytest.mark.parametrize("failure, expected", [(RuntimeError("private provider detail"), 502), (TimeoutError(), 504), ("", 502), ("   ", 502)])
+def test_message_upstream_failures_are_controlled_and_not_persisted(client, failure, expected):
+    session_id = _message_session(client)
+    if isinstance(failure, Exception):
+        client.tutor_gateway.generate.side_effect = failure
+    else:
+        client.tutor_gateway.generate.return_value = failure
+    response = client.post(f"/api/v1/tutor/sessions/{session_id}/messages", json={"content": "Explain"})
+    assert response.status_code == expected
+    assert "private provider detail" not in response.text
+    client.tutor_gateway.generate.assert_called_once()
+    assert client.tutor_db.query(LearningMessage).count() == 0
+
+
+def test_message_rejects_cross_subject_lesson(client):
+    session_id = _message_session(client)
+    from app.products.tutor.curriculum import get_subject_lesson
+    lesson = get_subject_lesson("physics")
+    response = client.post(
+        f"/api/v1/tutor/sessions/{session_id}/messages",
+        json={"content": "Explain", "lesson_id": lesson.id},
+    )
+    assert response.status_code == 422
+    client.tutor_gateway.generate.assert_not_called()
+    assert client.tutor_db.query(LearningMessage).count() == 0
+
+
+def test_message_without_context_keeps_learner_only(client):
+    session = client.post(
+        "/api/v1/tutor/sessions", json={"subject_code": "mathematics", "curriculum_version": "unavailable"}
+    ).json()
+    response = client.post(f"/api/v1/tutor/sessions/{session['id']}/messages", json={"content": "Explain"})
+    assert response.status_code == 200
+    assert response.json()["answer"]["status"] == "needs_context"
+    assert response.json()["tutor_message"] is None
+    client.tutor_gateway.generate.assert_not_called()
+    assert client.tutor_db.query(LearningMessage).count() == 1
 
 
 def test_curriculum_import_requires_platform_permission(client):

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
+from app.ai.gateway import ModelGateway
 from app.api.auth.dependencies import get_current_user_id
 from app.api.auth.permission_dependencies import require_permission
 from app.database.dependencies import get_db
@@ -38,6 +39,11 @@ from app.products.tutor.services import (
 
 
 router = APIRouter(prefix="/api/v1/tutor", tags=["Tutor"])
+
+
+def get_tutor_gateway() -> ModelGateway:
+    """Overridable inference dependency; generation stays in the Tutor service."""
+    return ModelGateway()
 
 
 @router.get("/lessons", response_model=list[LessonSummary])
@@ -193,6 +199,7 @@ def message(
     payload: MessageCreate,
     user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
+    gateway: ModelGateway = Depends(get_tutor_gateway),
 ):
     require_active_user(db, user_id)
     learning_session = get_session(db, user_id, session_id)
@@ -208,7 +215,7 @@ def message(
         adaptation_mode,
         next_action,
     ) = append_message(
-        db, learning_session, payload.content, payload.lesson_id, payload.locale
+        db, learning_session, payload.content, payload.lesson_id, payload.locale, gateway
     )
     return MessageExchange(
         learner_message=MessageView.model_validate(learner_message),
