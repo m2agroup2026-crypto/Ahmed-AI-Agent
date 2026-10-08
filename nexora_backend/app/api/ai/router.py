@@ -49,4 +49,5 @@ def execute_ai(
         intent=result["state"].intent,
         decision=result["decision"].decision,
         status=result["state"].status,
+        model_output=result.get("model_output"),
     )

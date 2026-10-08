@@ -14,3 +14,4 @@ class AIResponse(BaseModel):
     intent: str
     decision: str
     status: str
+    model_output: str | None = None
