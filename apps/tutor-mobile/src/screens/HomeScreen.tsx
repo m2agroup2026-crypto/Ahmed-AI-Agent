@@ -40,7 +40,7 @@ export function HomeScreen({ api, onOpenLesson, onOpenPractice }: Props) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.hero}>
-        <Text style={styles.eyebrow}>NEXORA TUTOR</Text>
+        <Text style={styles.eyebrow}>AQLITH Learn</Text>
         <Text style={styles.title}>اتعلم بفهم، خطوة بخطوة</Text>
         <Text style={styles.subtitle}>مساعدك الدراسي للثانوي في أي وقت ومن الموبايل.</Text>
       </View>

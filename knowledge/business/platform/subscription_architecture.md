@@ -1,10 +1,10 @@
-# NEXORA AI Subscription Architecture v1.0
+# AQLITH AI Subscription Architecture v1.0
 
 
 # Purpose
 
 
-Define the subscription and monetization system of NEXORA AI SaaS platform.
+Define the subscription and monetization system of AQLITH AI SaaS platform.
 
 
 The goal:
@@ -18,7 +18,7 @@ Provide accessible AI services while maintaining scalable business operations.
 # Subscription Philosophy
 
 
-NEXORA AI uses a flexible subscription model.
+AQLITH AI uses a flexible subscription model.
 
 
 The model combines:
@@ -46,7 +46,7 @@ AI Credits
 
 Purpose:
 
-Allow users to experience NEXORA AI.
+Allow users to experience AQLITH AI.
 
 
 Features:
@@ -146,7 +146,7 @@ Credits may be used for:
 # Usage Tracking
 
 
-NEXORA tracks:
+AQLITH tracks:
 
 
 - Messages.
@@ -209,7 +209,7 @@ Organizations support:
 # Payment Strategy
 
 
-NEXORA should support:
+AQLITH should support:
 
 
 Local payment methods:
@@ -230,6 +230,6 @@ Global expansion:
 # Long Term Vision
 
 
-Subscription system enables NEXORA AI to become a sustainable global AI platform.
+Subscription system enables AQLITH AI to become a sustainable global AI platform.
 
 Users start free, discover value, and upgrade as their intelligence needs grow.

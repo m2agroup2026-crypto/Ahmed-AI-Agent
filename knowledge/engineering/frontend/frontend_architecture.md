@@ -1,10 +1,10 @@
-# NEXORA AI Frontend Architecture v1.0
+# AQLITH AI Frontend Architecture v1.0
 
 
 # Purpose
 
 
-Define the frontend engineering architecture for NEXORA AI platform.
+Define the frontend engineering architecture for AQLITH AI platform.
 
 
 The frontend must provide a scalable, responsive, and intelligent user experience.
@@ -153,7 +153,7 @@ utils/
 
 Purpose:
 
-Explain NEXORA value.
+Explain AQLITH value.
 
 
 ---
@@ -286,4 +286,4 @@ Frontend should support:
 # Long Term Vision
 
 
-NEXORA frontend becomes the intelligent workspace where humans and AI collaborate.
+AQLITH frontend becomes the intelligent workspace where humans and AI collaborate.

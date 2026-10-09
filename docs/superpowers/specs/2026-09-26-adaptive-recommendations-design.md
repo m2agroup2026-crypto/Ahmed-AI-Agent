@@ -1,4 +1,4 @@
-# NEXORA Tutor Adaptive Recommendations
+# AQLITH Learn Adaptive Recommendations
 
 ## Goal
 

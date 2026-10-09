@@ -1,4 +1,4 @@
-# Nexora Tutor Web Companion
+# AQLITH Learn Web Companion
 
 This workspace is the guardian, content, and authorized administration
 experience. It consumes the same `packages/contracts` and Tutor API as the

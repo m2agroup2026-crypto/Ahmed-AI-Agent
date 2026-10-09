@@ -1,8 +1,8 @@
-# NEXORA AI Backend Architecture v1.0
+# AQLITH AI Backend Architecture v1.0
 
 ## Purpose
 
-Define the backend architecture that powers the NEXORA AI platform.
+Define the backend architecture that powers the AQLITH AI platform.
 
 The backend must support:
 - AI orchestration
@@ -19,7 +19,7 @@ The backend must support:
 
 ## Architecture Strategy
 
-NEXORA starts as a Modular Monolith.
+AQLITH starts as a Modular Monolith.
 
 This provides:
 - Fast MVP development
@@ -56,7 +56,7 @@ Worker/queue architecture when required
 
 AI runtime:
 
-NEXORA existing Agent, Tool, Memory, Judgment and Orchestration systems.
+AQLITH existing Agent, Tool, Memory, Judgment and Orchestration systems.
 
 ---
 
@@ -208,7 +208,7 @@ Billing must not be tightly coupled to a single payment provider.
 
 ## Multi-Tenant Architecture
 
-NEXORA is multi-tenant.
+AQLITH is multi-tenant.
 
 Every protected resource must belong to a user, workspace, or organization.
 
@@ -359,7 +359,7 @@ These operations should move to controlled background workers.
 
 ## Observability
 
-NEXORA should record:
+AQLITH should record:
 - Request IDs
 - Errors
 - AI execution metadata
@@ -411,7 +411,7 @@ Potential future services:
 
 ## Engineering Rule
 
-NEXORA must not adopt complexity before it is required.
+AQLITH must not adopt complexity before it is required.
 
 Architecture decisions should optimize for:
 
@@ -429,4 +429,4 @@ Measured Scalability
 
 ## Long-Term Goal
 
-The NEXORA backend becomes the secure platform layer connecting users and organizations with specialized AI intelligence, knowledge, memory, tools and automated workflows.
+The AQLITH backend becomes the secure platform layer connecting users and organizations with specialized AI intelligence, knowledge, memory, tools and automated workflows.

@@ -1,10 +1,10 @@
-# NEXORA AI Database Architecture v1.0
+# AQLITH AI Database Architecture v1.0
 
 
 # Purpose
 
 
-Define the database architecture that stores and manages NEXORA AI platform data.
+Define the database architecture that stores and manages AQLITH AI platform data.
 
 
 The database must support:
@@ -25,7 +25,7 @@ The database must support:
 # Database Strategy
 
 
-NEXORA uses PostgreSQL as the primary relational database.
+AQLITH uses PostgreSQL as the primary relational database.
 
 
 Reasons:
@@ -415,4 +415,4 @@ Production systems require:
 # Long Term Vision
 
 
-The NEXORA database becomes the foundation of a secure intelligent operating system where every user and organization has a structured digital memory.
+The AQLITH database becomes the foundation of a secure intelligent operating system where every user and organization has a structured digital memory.

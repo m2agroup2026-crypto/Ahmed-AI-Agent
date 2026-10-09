@@ -18,7 +18,7 @@ router = APIRouter(
 def auth_health():
 
     return {
-        "service": "NEXORA Authentication",
+        "service": "AQLITH Authentication",
         "status": "ready"
     }
 
@@ -82,7 +82,7 @@ def admin_test(
 ):
 
     return {
-        "message": "NEXORA protected endpoint",
+        "message": "AQLITH protected endpoint",
         "permission": "dashboard.manage",
         "access": "granted"
     }

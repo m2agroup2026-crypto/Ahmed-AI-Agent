@@ -1,13 +1,13 @@
-# NEXORA AI START HERE
+# AQLITH AI START HERE
 
 Version: v0.1.0
 
 
 # Welcome
 
-You are continuing the development of NEXORA AI.
+You are continuing the development of AQLITH AI.
 
-NEXORA AI is an intelligent SaaS platform that combines:
+AQLITH AI is an intelligent SaaS platform that combines:
 
 - AI Agents
 - Memory Systems
@@ -108,7 +108,7 @@ Contains project continuity documentation.
 
 Current phase:
 
-NEXORA Platform Build
+AQLITH Platform Build
 
 
 Current priority:
@@ -192,4 +192,4 @@ Continue from the current state.
 # Final Mission
 
 
-Build NEXORA AI into a scalable intelligent platform serving individuals and organizations worldwide.
+Build AQLITH AI into a scalable intelligent platform serving individuals and organizations worldwide.

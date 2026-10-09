@@ -1,4 +1,4 @@
-# NEXORA AI MASTER CONTEXT
+# AQLITH AI MASTER CONTEXT
 
 Version: 0.1.0
 
@@ -6,10 +6,10 @@ Version: 0.1.0
 # 1. Project Identity
 
 
-NEXORA AI is an intelligent SaaS platform designed to connect humans and AI through specialized intelligence systems, memory, knowledge, and automation.
+AQLITH AI is an intelligent SaaS platform designed to connect humans and AI through specialized intelligence systems, memory, knowledge, and automation.
 
 
-NEXORA is not designed as a simple chatbot.
+AQLITH is not designed as a simple chatbot.
 
 The vision is:
 
@@ -40,7 +40,7 @@ The system should:
 # 3. Development Philosophy
 
 
-NEXORA follows:
+AQLITH follows:
 
 
 Documentation First
@@ -122,7 +122,7 @@ Capabilities:
 ---
 
 
-# 5. NEXORA Platform Vision
+# 5. AQLITH Platform Vision
 
 
 The platform transforms the AI engine into a SaaS product.
@@ -237,7 +237,7 @@ Core entities:
 # 7. SaaS Business Model
 
 
-NEXORA uses:
+AQLITH uses:
 
 
 Free Experience
@@ -345,7 +345,7 @@ Any AI assistant continuing this project must:
 # 11. Project Mindset
 
 
-NEXORA is built as a long-term technology company, not a temporary experiment.
+AQLITH is built as a long-term technology company, not a temporary experiment.
 
 
 Every feature should improve:
@@ -363,7 +363,7 @@ Every feature should improve:
 # Final Statement
 
 
-Continue building NEXORA AI step by step.
+Continue building AQLITH AI step by step.
 
 The objective is not only to create software.
 

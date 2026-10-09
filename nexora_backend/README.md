@@ -1,9 +1,9 @@
-# NEXORA AI Backend
+# AQLITH AI Backend
 
 
 ## Overview
 
-NEXORA AI Backend is the platform layer that connects users, organizations, and AI intelligence systems.
+AQLITH AI Backend is the platform layer that connects users, organizations, and AI intelligence systems.
 
 
 It provides:
@@ -24,7 +24,7 @@ It provides:
 ## Architecture
 
 
-NEXORA Backend connects:
+AQLITH Backend connects:
 
 
 Users
@@ -74,7 +74,7 @@ Goals:
 
 ## Tutor foundation
 
-The first product slice is Nexora Tutor for secondary learners. The Tutor API
+The first product slice is AQLITH Learn for secondary learners. The Tutor API
 is mounted under `/api/v1/tutor` and requires a bearer token from the shared
 identity service. It currently provides:
 
@@ -133,7 +133,7 @@ app/
 ## Engineering Principles
 
 
-NEXORA follows:
+AQLITH follows:
 
 
 - Modular architecture.

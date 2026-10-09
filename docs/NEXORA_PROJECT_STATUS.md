@@ -1,4 +1,4 @@
-# NEXORA AI Project Status Document
+# AQLITH AI Project Status Document
 
 Version: v0.1.0
 
@@ -8,7 +8,7 @@ Date: 2026
 
 # 1. Project Vision
 
-NEXORA AI is an intelligent SaaS platform designed to provide users and organizations with specialized AI capabilities, personal memory, knowledge management, automation, and intelligent workflows.
+AQLITH AI is an intelligent SaaS platform designed to provide users and organizations with specialized AI capabilities, personal memory, knowledge management, automation, and intelligent workflows.
 
 The platform vision:
 
@@ -330,7 +330,7 @@ Tasks:
 
 # 10. Long Term Vision
 
-NEXORA AI aims to become a scalable AI operating platform serving individuals, professionals, and organizations.
+AQLITH AI aims to become a scalable AI operating platform serving individuals, professionals, and organizations.
 
 The platform combines:
 

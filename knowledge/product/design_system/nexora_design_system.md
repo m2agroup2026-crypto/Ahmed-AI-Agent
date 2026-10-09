@@ -1,10 +1,10 @@
-# NEXORA AI Design System v1.0
+# AQLITH AI Design System v1.0
 
 
 # Purpose
 
 
-Define the visual and interaction language of NEXORA AI platform.
+Define the visual and interaction language of AQLITH AI platform.
 
 
 The design system ensures consistency across:
@@ -22,7 +22,7 @@ The design system ensures consistency across:
 # Design Philosophy
 
 
-NEXORA AI should feel:
+AQLITH AI should feel:
 
 
 - Intelligent.
@@ -108,7 +108,7 @@ The system should use:
 
 Primary:
 
-NEXORA brand identity color.
+AQLITH brand identity color.
 
 
 Supporting:
@@ -269,4 +269,4 @@ The design should support:
 # Long Term Vision
 
 
-NEXORA Design System becomes the foundation for all future AI products and interfaces.
+AQLITH Design System becomes the foundation for all future AI products and interfaces.

@@ -1,8 +1,8 @@
-# NEXORA Billing Architecture
+# AQLITH Billing Architecture
 
 ## Overview
 
-NEXORA uses a SaaS subscription model based on:
+AQLITH uses a SaaS subscription model based on:
 - Subscription Plans
 - Credit Wallets
 - Usage Tracking

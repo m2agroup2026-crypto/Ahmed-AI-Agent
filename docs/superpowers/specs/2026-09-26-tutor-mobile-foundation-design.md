@@ -2,13 +2,13 @@
 
 **Status:** Approved; foundation implementation in progress.
 **Date:** 2026-09-26
-**Product:** Nexora Tutor AI
+**Product:** AQLITH Learn
 
 ## 1. Goal and scope
 
-Nexora Tutor AI is the first student-facing Nexora product. The first release is a mobile-first learning companion for Egyptian secondary students. It starts with Mathematics, Physics, and English and provides guided explanations, practice, assessment, and progress memory.
+AQLITH Learn is the first student-facing AQLITH product. The first release is a mobile-first learning companion for Egyptian secondary students. It starts with Mathematics, Physics, and English and provides guided explanations, practice, assessment, and progress memory.
 
-The student experience is delivered by a React Native + Expo application. A web companion serves guardians, content operators, and authorized administrators. Nexora Core remains the shared platform for identity, workspaces, agents, memory, knowledge, usage, billing, and audit.
+The student experience is delivered by a React Native + Expo application. A web companion serves guardians, content operators, and authorized administrators. AQLITH Core remains the shared platform for identity, workspaces, agents, memory, knowledge, usage, billing, and audit.
 
 The MVP is intentionally bounded. It does not include a full agent marketplace, unrestricted web search, live human tutoring, multi-country curricula, or a custom 3D rendering engine.
 
@@ -18,7 +18,7 @@ The repository remains a modular product workspace:
 
 ```text
 Ahmed-AI-Agent/
-├── core/                         Nexora intelligence primitives
+├── core/                         AQLITH intelligence primitives
 ├── nexora_backend/               shared platform API
 ├── apps/tutor-mobile/            student mobile application
 ├── apps/tutor-web/               guardian/admin web companion
@@ -44,7 +44,7 @@ The mobile client never receives provider secrets. Voice uses a backend provider
 
 ## 4. Domain data
 
-Nexora owns the shared identity and platform records: `User`, `Workspace`, subscription, usage, and audit records. Tutor owns only the educational records needed for the first release:
+AQLITH owns the shared identity and platform records: `User`, `Workspace`, subscription, usage, and audit records. Tutor owns only the educational records needed for the first release:
 
 - `LearnerProfile`: grade, language, selected subjects, and learning preferences.
 - `CurriculumVersion`, `Lesson`, and `Skill`: approved, versioned content.
