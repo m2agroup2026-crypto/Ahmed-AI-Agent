@@ -63,7 +63,7 @@ export function PracticeScreen({ api, subjectCode, curriculumVersion, lessonId, 
           <Text style={styles.back}>›</Text>
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>NEXORA PRACTICE</Text>
+          <Text style={styles.eyebrow}>AQLITH Learn Practice</Text>
           <Text style={styles.title}>تدرّب بفهم</Text>
         </View>
       </View>

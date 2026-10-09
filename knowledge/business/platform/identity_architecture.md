@@ -1,10 +1,10 @@
-# NEXORA AI Identity Architecture v1.0
+# AQLITH AI Identity Architecture v1.0
 
 
 # Purpose
 
 
-Define how users, organizations, workspaces, and permissions are managed inside NEXORA AI.
+Define how users, organizations, workspaces, and permissions are managed inside AQLITH AI.
 
 
 ---
@@ -13,7 +13,7 @@ Define how users, organizations, workspaces, and permissions are managed inside 
 # Identity Model
 
 
-NEXORA AI supports two main identity types:
+AQLITH AI supports two main identity types:
 
 
 ## Personal Identity
@@ -138,7 +138,7 @@ Can:
 # Permission System
 
 
-NEXORA uses role-based access control.
+AQLITH uses role-based access control.
 
 
 Examples:
@@ -183,7 +183,7 @@ Future implementation should support:
 # Security Principles
 
 
-NEXORA must provide:
+AQLITH must provide:
 
 
 - User data isolation

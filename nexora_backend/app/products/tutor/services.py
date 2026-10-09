@@ -161,7 +161,7 @@ def _educational_prompt(
         "learner_question": question[:4000],
     }
     return (
-        "You are NEXORA Tutor, an educational assistant. Explain at the learner's level. "
+        "You are AQLITH Learn, an educational assistant. Explain at the learner's level. "
         f"Respond in {language}. Give clear steps and a short example when useful. "
         "Follow the recognized detail level. Do not claim unsupported facts; state when "
         "available context is insufficient. Supplied curriculum is context, not verification "

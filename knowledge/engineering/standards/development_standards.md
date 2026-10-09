@@ -1,10 +1,10 @@
-# NEXORA AI Development Standards v1.0
+# AQLITH AI Development Standards v1.0
 
 
 # Purpose
 
 
-Define engineering standards for building and maintaining NEXORA AI platform.
+Define engineering standards for building and maintaining AQLITH AI platform.
 
 
 These standards ensure:
@@ -22,7 +22,7 @@ These standards ensure:
 # Development Philosophy
 
 
-NEXORA development follows:
+AQLITH development follows:
 
 
 Think clearly.
@@ -252,7 +252,7 @@ Production deployment requires:
 # Engineering Culture
 
 
-NEXORA teams value:
+AQLITH teams value:
 
 
 - Learning.

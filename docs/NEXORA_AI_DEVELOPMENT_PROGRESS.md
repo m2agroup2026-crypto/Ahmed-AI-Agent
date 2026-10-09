@@ -1,4 +1,4 @@
-# NEXORA AI DEVELOPMENT PROGRESS
+# AQLITH AI DEVELOPMENT PROGRESS
 
 ## Version
 
@@ -275,4 +275,4 @@ Documented
 # Current Mission
 
 
-Transform NEXORA AI from a foundation into a working AI SaaS platform.
+Transform AQLITH AI from a foundation into a working AI SaaS platform.

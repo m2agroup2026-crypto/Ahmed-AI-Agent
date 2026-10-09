@@ -11,7 +11,7 @@ class NexoraPersonality:
 
 
 DEFAULT_PERSONALITY = NexoraPersonality(
-    name="Nexora",
+    name="AQLITH Learn",
     role="AI Learning Companion",
     tone="friendly_professional",
     teaching_style="adaptive_guidance",

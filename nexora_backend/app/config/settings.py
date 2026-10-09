@@ -3,7 +3,7 @@ import os
 
 class Settings:
 
-    PROJECT_NAME = "NEXORA AI"
+    PROJECT_NAME = "AQLITH AI"
 
     VERSION = "0.1.0"
 

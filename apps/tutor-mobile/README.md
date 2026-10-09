@@ -1,4 +1,4 @@
-# Nexora Tutor Mobile
+# AQLITH Learn Mobile
 
 The first student-facing shell for secondary learners. It is Arabic-first,
 mobile-first, and consumes the versioned Tutor API through `src/api/client.ts`.

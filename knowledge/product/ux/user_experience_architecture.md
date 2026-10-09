@@ -1,10 +1,10 @@
-# NEXORA AI User Experience Architecture v1.0
+# AQLITH AI User Experience Architecture v1.0
 
 
 # UX Philosophy
 
 
-NEXORA AI follows a mobile-first design approach.
+AQLITH AI follows a mobile-first design approach.
 
 
 The primary experience starts from mobile devices, then expands into tablet and desktop environments.
@@ -156,7 +156,7 @@ Desktop should add capability, not complexity.
 # Future Interface
 
 
-NEXORA should support:
+AQLITH should support:
 
 
 - Voice interaction.

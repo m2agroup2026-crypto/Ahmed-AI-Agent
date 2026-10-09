@@ -1,10 +1,10 @@
-# NEXORA AI Usage & Credit Architecture v1.0
+# AQLITH AI Usage & Credit Architecture v1.0
 
 
 # Purpose
 
 
-Define how NEXORA AI measures, controls, and optimizes AI usage across users and organizations.
+Define how AQLITH AI measures, controls, and optimizes AI usage across users and organizations.
 
 
 The system ensures:
@@ -128,7 +128,7 @@ Each subscription plan defines:
 # Upgrade Intelligence
 
 
-NEXORA should detect:
+AQLITH should detect:
 
 
 - Users approaching limits.
@@ -170,7 +170,7 @@ The platform provides:
 # Cost Management
 
 
-The usage system helps NEXORA:
+The usage system helps AQLITH:
 
 
 - Control AI infrastructure costs.

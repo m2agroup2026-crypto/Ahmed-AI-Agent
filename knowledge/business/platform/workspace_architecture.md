@@ -1,10 +1,10 @@
-# NEXORA AI Workspace Architecture v1.0
+# AQLITH AI Workspace Architecture v1.0
 
 
 # Purpose
 
 
-The Workspace is the central environment where users and organizations interact with NEXORA AI capabilities.
+The Workspace is the central environment where users and organizations interact with AQLITH AI capabilities.
 
 
 A workspace combines:
@@ -165,4 +165,4 @@ Personal and organization data must remain separated.
 # Future Vision
 
 
-A NEXORA Workspace becomes a complete digital environment where every user or organization has its own intelligent operating system.
+A AQLITH Workspace becomes a complete digital environment where every user or organization has its own intelligent operating system.

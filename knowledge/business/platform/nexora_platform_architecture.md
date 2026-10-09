@@ -1,10 +1,10 @@
-# NEXORA AI Platform Architecture v1.0
+# AQLITH AI Platform Architecture v1.0
 
 
 # Vision
 
 
-NEXORA AI is designed as a scalable AI platform that provides intelligent systems for individuals, professionals, and organizations.
+AQLITH AI is designed as a scalable AI platform that provides intelligent systems for individuals, professionals, and organizations.
 
 
 The platform combines:
@@ -23,7 +23,7 @@ The platform combines:
 # Platform Architecture
 
 
-NEXORA AI consists of multiple layers:
+AQLITH AI consists of multiple layers:
 
 
 # 1. User Layer
@@ -181,7 +181,7 @@ Requirements:
 # 6. Subscription Model
 
 
-NEXORA AI supports:
+AQLITH AI supports:
 
 
 ## Free
@@ -226,4 +226,4 @@ The platform can support:
 # Long Term Goal
 
 
-NEXORA AI becomes an intelligence operating layer for organizations.
+AQLITH AI becomes an intelligence operating layer for organizations.

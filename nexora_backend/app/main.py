@@ -6,7 +6,7 @@ from app.products.tutor.api import router as tutor_router
 
 
 app = FastAPI(
-    title="NEXORA AI",
+    title="AQLITH AI",
     description="Intelligent AI Operating Platform",
     version="0.1.0"
 )
@@ -21,7 +21,7 @@ app.include_router(tutor_router)
 def health_check():
 
     return {
-        "platform": "NEXORA AI",
+        "platform": "AQLITH AI",
         "status": "running",
         "version": "0.1.0"
     }

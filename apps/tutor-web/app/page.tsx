@@ -30,7 +30,7 @@ export default function TutorWebHome() {
     <main className="shell">
       <header className="topbar">
         <div>
-          <span className="eyebrow">NEXORA / TUTOR</span>
+          <span className="eyebrow">AQLITH / LEARN</span>
           <h1>مركز متابعة التعلم</h1>
         </div>
         <span className="status">محتوى منهجي</span>

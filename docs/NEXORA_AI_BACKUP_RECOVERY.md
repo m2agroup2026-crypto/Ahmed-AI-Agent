@@ -1,11 +1,11 @@
-# NEXORA AI Backup & Recovery Guide
+# AQLITH AI Backup & Recovery Guide
 
 Version: v0.1.0
 
 
 # Purpose
 
-This document defines how to protect, backup, and recover the NEXORA AI project.
+This document defines how to protect, backup, and recover the AQLITH AI project.
 
 The objective is to preserve:
 
@@ -20,7 +20,7 @@ The objective is to preserve:
 
 # Backup Philosophy
 
-NEXORA AI follows a multi-layer backup strategy.
+AQLITH AI follows a multi-layer backup strategy.
 
 
 No single storage location should contain the only copy of the project.
@@ -287,6 +287,6 @@ The goal is to recover the complete intelligence and history of the project.
 # Final Statement
 
 
-NEXORA AI is designed to evolve continuously.
+AQLITH AI is designed to evolve continuously.
 
 Its code, knowledge, decisions, and history must always remain protected.

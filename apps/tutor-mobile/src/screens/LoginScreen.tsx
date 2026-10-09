@@ -38,7 +38,7 @@ export function LoginScreen({ onLogin }: Props) {
   return (
     <View style={styles.screen}>
       <View style={styles.brand}>
-        <Text style={styles.eyebrow}>NEXORA TUTOR</Text>
+        <Text style={styles.eyebrow}>AQLITH Learn</Text>
         <Text style={styles.title}>ابدأ رحلة التعلم</Text>
         <Text style={styles.subtitle}>سجّل الدخول للوصول إلى دروسك وجلساتك.</Text>
       </View>

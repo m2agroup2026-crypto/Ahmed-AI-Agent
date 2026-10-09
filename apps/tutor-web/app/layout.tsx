@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Nexora Tutor",
-  description: "Guardian and curriculum companion for Nexora Tutor AI",
+  title: "AQLITH Learn",
+  description: "Guardian and curriculum companion for AQLITH Learn",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

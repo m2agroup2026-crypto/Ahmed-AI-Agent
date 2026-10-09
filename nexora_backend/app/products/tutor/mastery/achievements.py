@@ -37,7 +37,7 @@ ACHIEVEMENTS = [
 
     Achievement(
         name="innovation_master",
-        description="Student reached the highest Nexora mastery level.",
+        description="Student reached the highest AQLITH Learn mastery level.",
         required_level="genius",
     ),
 

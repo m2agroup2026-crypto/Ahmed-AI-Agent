@@ -1,16 +1,16 @@
-# NEXORA TUTOR — Product Vision and Launch Design
+# AQLITH Learn — Product Vision and Launch Design
 
 **Status:** Approved for product planning; implementation follows the review gates in this document.
 **Date:** 2026-09-26
-**Product:** NEXORA TUTOR
-**Arabic descriptor:** نيكسورا — مدرسك الذكي
+**Product:** AQLITH Learn
+**Arabic descriptor:** AQLITH Learn — مدرسك الذكي
 **Tagline:** افهم أسرع، اتدرّب بذكاء، واتقدّم بثقة.
 
 ## 1. Product decision
 
-NEXORA TUTOR is the first student-facing product in the broader NEXORA AI ecosystem. It is a mobile-first AI learning companion for Egyptian secondary students. The first curriculum release covers Mathematics, Physics, and English, with Arabic-first interaction and English support.
+AQLITH Learn is the first student-facing product in the broader AQLITH AI ecosystem. It is a mobile-first AI learning companion for Egyptian secondary students. The first curriculum release covers Mathematics, Physics, and English, with Arabic-first interaction and English support.
 
-NEXORA remains the platform brand. TUTOR is the education product. The product name is clear enough for students and guardians, while the platform boundary keeps later products such as enterprise and institutional offerings independent.
+AQLITH remains the platform brand. AQLITH Learn is the education product. The product name is clear enough for students and guardians, while the platform boundary keeps later products such as enterprise and institutional offerings independent.
 
 Before public registration or paid acquisition, the name must pass trademark, domain, application-store, and social-handle clearance in the target markets.
 
@@ -49,7 +49,7 @@ The product never invents grades, mastery, curriculum coverage, or progress numb
 - Additional subjects and curricula.
 - Optional avatar presentation layer.
 - School and learning-center workspaces.
-- Enterprise learning products built on the same NEXORA Core.
+- Enterprise learning products built on the same AQLITH Core.
 
 The avatar is a presentation layer. It must never become a dependency for the core learning loop.
 
@@ -155,7 +155,7 @@ The plan assumes a small focused team containing backend/AI, mobile/web, design/
 | 7 | Content operations, usage limits, and subscription flow | 2 weeks |
 | 8 | Security, performance, observability, beta, and release hardening | 2 weeks |
 
-From the current foundation, the target is a closed beta in 8–10 weeks and a commercial V1 in 14–16 weeks. A solo implementation should be planned at roughly 20–24 weeks. The full NEXORA education and enterprise ecosystem is a 9–12 month expansion and is not a prerequisite for the first Tutor launch.
+From the current foundation, the target is a closed beta in 8–10 weeks and a commercial V1 in 14–16 weeks. A solo implementation should be planned at roughly 20–24 weeks. The full AQLITH education and enterprise ecosystem is a 9–12 month expansion and is not a prerequisite for the first Tutor launch.
 
 ## 10. Launch gates
 

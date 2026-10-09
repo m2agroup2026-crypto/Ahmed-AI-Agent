@@ -1,10 +1,10 @@
-# NEXORA AI MVP Architecture v1.0
+# AQLITH AI MVP Architecture v1.0
 
 
 # Purpose
 
 
-Define the first public version of NEXORA AI that can be released to real users.
+Define the first public version of AQLITH AI that can be released to real users.
 
 
 The MVP goal:
@@ -214,7 +214,7 @@ Main screens:
 
 ## Landing Page
 
-Explain NEXORA value.
+Explain AQLITH value.
 
 
 ## Authentication
