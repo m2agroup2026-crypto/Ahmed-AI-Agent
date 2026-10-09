@@ -165,4 +165,4 @@ Personal and organization data must remain separated.
 # Future Vision
 
 
-A AQLITH Workspace becomes a complete digital environment where every user or organization has its own intelligent operating system.
+An AQLITH Workspace becomes a complete digital environment where every user or organization has its own intelligent operating system.
