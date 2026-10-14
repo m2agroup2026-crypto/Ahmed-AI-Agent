@@ -1,6 +1,33 @@
-"""Shared test database bootstrap for legacy and product API tests."""
+"""Isolated test bootstrap; refuse persistent databases before app imports."""
+
+import os
+import secrets
 
 import pytest
+from sqlalchemy import event
+from sqlalchemy.engine import Dialect
+
+
+def require_isolated_database_url(url: str) -> None:
+    if url not in {"sqlite://", "sqlite:///:memory:"}:
+        raise pytest.UsageError(
+            "Tests require disposable in-memory SQLite; persistent databases are forbidden."
+        )
+
+
+# Validate before importing the application's engine or any test module.
+require_isolated_database_url(os.environ.get("DATABASE_URL", "sqlite://"))
+os.environ["DATABASE_URL"] = "sqlite://"
+os.environ["SECRET_KEY"] = secrets.token_urlsafe(48)
+
+
+@event.listens_for(Dialect, "do_connect")
+def refuse_persistent_test_connection(dialect, connection_record, args, kwargs):
+    """Also block test-created engines before they open any existing database."""
+    if dialect.name != "sqlite" or not args or args[0] != ":memory:":
+        raise pytest.UsageError(
+            "Test database connection blocked: only in-memory SQLite is permitted."
+        )
 
 from app.database.base import Base
 from app.database.connection import SessionLocal, engine
@@ -11,9 +38,10 @@ from app.models.user import User
 
 
 @pytest.fixture(scope="session", autouse=True)
-def bootstrap_default_database():
-    """Provide the minimal seeded identity expected by legacy AI tests."""
+def bootstrap_isolated_database():
+    """Seed legacy identity only in this process's disposable test database."""
 
+    require_isolated_database_url(engine.url.render_as_string(hide_password=True))
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:

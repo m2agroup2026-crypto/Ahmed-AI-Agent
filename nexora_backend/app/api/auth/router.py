@@ -48,20 +48,14 @@ def login(
     )
 
 
-from app.api.auth.dependencies import get_current_user_id
-from app.services.current_user_service import get_user_by_id
+from app.api.auth.dependencies import get_current_user
+from app.models.user import User
 
 
 @router.get("/me")
 def current_user(
-    user_id: int = Depends(get_current_user_id),
-    db: Session = Depends(get_db)
+    user: User = Depends(get_current_user),
 ):
-
-    user = get_user_by_id(
-        db,
-        user_id
-    )
 
     return {
         "id": user.id,
