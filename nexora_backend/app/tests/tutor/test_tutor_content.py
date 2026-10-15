@@ -49,6 +49,7 @@ def _payload(*, license_status="approved", version_status="published", lesson_st
                 "stage": "secondary",
                 "grade_level": "secondary-1",
                 "academic_year": "2025-2026",
+                "content_language": "ar",
                 "status": version_status,
             },
             "skills": [
@@ -99,6 +100,43 @@ def _payload(*, license_status="approved", version_status="published", lesson_st
             ],
         }
     )
+
+
+def test_new_bilingual_import_without_any_declared_language_is_rejected(db):
+    bundle = _payload().model_dump()
+    del bundle["version"]["content_language"]
+    with pytest.raises(HTTPException) as error:
+        import_curriculum_bundle(db, CurriculumImportPayload.model_validate(bundle))
+    assert error.value.status_code == 422
+    assert "content_language must be declared as ar or en" in error.value.detail
+    assert not db.new and not db.dirty
+    assert db.query(CurriculumLesson).count() == 0
+
+
+@pytest.mark.parametrize("language", ["ar", "en"])
+def test_new_source_language_only_import_is_idempotent_and_legacy_answers_work(db, language):
+    bundle = _payload().model_dump()
+    bundle["version"]["content_language"] = language
+    other = "en" if language == "ar" else "ar"
+    for item in [bundle["source"], bundle["version"], *bundle["skills"],
+                 *bundle["lessons"], *bundle["questions"]]:
+        for key in list(item):
+            if key.endswith("_" + other):
+                del item[key]
+    payload = CurriculumImportPayload.model_validate(bundle)
+    import_curriculum_bundle(db, payload)
+    import_curriculum_bundle(db, payload)
+    assert db.query(CurriculumLesson).count() == 1
+    question = get_next_question(db, 1, "mathematics", bundle["version"]["code"])
+    assert question["content_language"] == language
+    assert question["options_" + other] == []
+    # Existing raw-label clients and modern stable-ID clients both remain valid.
+    answers = ["3", next(option["id"] for option in question["options_" + language]
+                         if option["label"] == "3")]
+    for answer in answers:
+        result = submit_attempt(db, 1, question["id"], answer, "en-US" if language == "ar" else "ar-EG")
+        assert result.is_correct and result.content_language == language
+        assert getattr(result, "explanation_" + language) == bundle["questions"][0]["explanation_" + language]
 
 
 def test_import_is_idempotent_and_published_content_is_preferred(db):
@@ -181,3 +219,18 @@ def test_draft_content_is_not_exposed_until_published(db):
     )
 
     assert list_lessons(db, "mathematics")[0]["id"] == "math-linear-equations"
+
+
+def _declared_fixture_bundle():
+    """Declare language only for test fixtures; never relabel production source data."""
+    from app.products.tutor.curriculum import list_lessons as fixture_lessons
+    bundle = _payload().model_dump()
+    bundle["version"]["content_language"] = "en"
+    bundle["questions"] = []
+    bundle["lessons"] = [
+        dict(item, content_ar=item["summary_ar"], content_en=item["summary_en"],
+             source_url="https://example.org/test-fixture", source_locator="test-fixture",
+             source_checksum="test-fixture", status="published", content_language="en")
+        for item in fixture_lessons()
+    ]
+    return CurriculumImportPayload.model_validate(bundle)

@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.ai.gateway import ModelGateway
-from app.api.auth.dependencies import get_current_user_id
+from app.api.auth.dependencies import get_current_user, get_current_user_id
 from app.api.auth.permission_dependencies import require_permission
 from app.database.dependencies import get_db
-from app.products.tutor.content import list_lessons
+from app.products.tutor.content import get_lesson, lesson_summary, list_curriculum, list_lessons
 from app.products.tutor.importer import import_curriculum_bundle
 from app.products.tutor.practice import get_next_question, submit_attempt
 from app.products.tutor.progress import get_progress
@@ -14,6 +14,8 @@ from app.products.tutor.schemas import (
     CurriculumImportPayload,
     CurriculumImportResult,
     LessonSummary,
+    LessonDetail,
+    CurriculumCatalogVersion,
     MessageCreate,
     MessageExchange,
     MessageView,
@@ -38,7 +40,11 @@ from app.products.tutor.services import (
 )
 
 
-router = APIRouter(prefix="/api/v1/tutor", tags=["Tutor"])
+router = APIRouter(
+    prefix="/api/v1/tutor",
+    tags=["Tutor"],
+    dependencies=[Depends(get_current_user)],
+)
 
 
 def get_tutor_gateway() -> ModelGateway:
@@ -55,6 +61,30 @@ def lessons(
 ):
     require_active_user(db, user_id)
     return list_lessons(db, subject_code, curriculum_version)
+
+
+@router.get("/curriculum", response_model=list[CurriculumCatalogVersion])
+def curriculum(
+    subject_code: str = Query(default="mathematics", min_length=1, max_length=32),
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    require_active_user(db, user_id)
+    return list_curriculum(db, subject_code)
+
+
+@router.get("/lessons/{lesson_id}", response_model=LessonDetail)
+def lesson_detail(
+    lesson_id: str,
+    curriculum_version: str = Query(..., min_length=1, max_length=64),
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    require_active_user(db, user_id)
+    lesson = get_lesson(db, lesson_id, curriculum_version)
+    if lesson is None or lesson.source_status == "foundation_fixture":
+        raise HTTPException(status_code=404, detail="Published lesson not found")
+    return {**lesson_summary(lesson), "content_ar": lesson.content_ar, "content_en": lesson.content_en}
 
 
 @router.post(
@@ -108,6 +138,7 @@ def practice_attempt(
         payload.session_id,
     )
     return PracticeAttemptResponse(
+        content_language=result.content_language,
         attempt_id=result.attempt_id,
         question_id=result.question_id,
         is_correct=result.is_correct,
@@ -268,18 +299,9 @@ router.include_router(
 )
 
 
-from app.products.tutor.memory.router import router as memory_router
-
-router.include_router(
-    memory_router
-)
-
-
-from app.products.tutor.context.router import router as context_router
-
-router.include_router(
-    context_router
-)
+# Memory, context and cognitive-loop prototypes accept Student IDs, but Student
+# has no verified ownership mapping to authenticated users. Keep these modules
+# internal until that mapping and ownership checks exist; never equate IDs.
 
 
 from app.products.tutor.response.router import router as response_router
@@ -293,11 +315,4 @@ from app.products.tutor.orchestration.router import router as orchestration_rout
 
 router.include_router(
     orchestration_router
-)
-
-
-from app.products.tutor.cognitive_loop.router import router as cognitive_loop_router
-
-router.include_router(
-    cognitive_loop_router
 )

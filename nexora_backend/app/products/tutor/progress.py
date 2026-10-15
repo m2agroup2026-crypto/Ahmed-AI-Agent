@@ -47,7 +47,10 @@ def get_progress(
     if subject_code:
         query = query.filter(CurriculumLesson.subject_code == subject_code)
 
-    rows = query.order_by(AssessmentAttempt.created_at.asc()).all()
+    rows = query.order_by(AssessmentAttempt.created_at.asc(), AssessmentAttempt.id.asc()).all()
+    lessons: dict[str, dict] = {}
+    last_lesson_id = None
+    last_curriculum_version = None
     skills: dict[str, dict] = defaultdict(
         lambda: {"attempts": 0, "correct": 0, "score": 0, "max_score": 0}
     )
@@ -59,6 +62,13 @@ def get_progress(
     subjects: set[str] = set()
 
     for attempt, question, lesson in rows:
+        last_lesson_id = lesson.id
+        last_curriculum_version = lesson.curriculum_version
+        lesson_progress = lessons.setdefault(lesson.id, {
+            "lesson_id": lesson.id, "attempts": 0, "correct_answers": 0,
+        })
+        lesson_progress["attempts"] += 1
+        lesson_progress["correct_answers"] += int(attempt.is_correct)
         correct_answers += int(attempt.is_correct)
         score += attempt.score
         max_score += question.points
@@ -103,6 +113,9 @@ def get_progress(
         "skills": skill_rows,
         "next_focus_skill": next_focus_skill,
         "last_activity_at": last_activity_at,
+        "last_lesson_id": last_lesson_id,
+        "last_curriculum_version": last_curriculum_version,
+        "lessons": list(lessons.values()),
     }
 
 

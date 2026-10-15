@@ -1,3 +1,5 @@
+export type ContentLanguage = "ar" | "en";
+
 export type TutorSubject = "mathematics" | "physics" | "english";
 
 export interface TutorProfile {
@@ -20,6 +22,9 @@ export interface LessonSummary {
   summary_en: string;
   skill_codes: string[];
   curriculum_version: string;
+  content_language: ContentLanguage | null;
+  unit_id?: string | null;
+  position?: number;
   source_id?: string | null;
   source_name_ar?: string | null;
   source_name_en?: string | null;
@@ -61,6 +66,11 @@ export interface TutorMessageExchange {
   };
 }
 
+export interface ChoiceOption {
+  id: string;
+  label: string;
+}
+
 export interface PracticeQuestion {
   id: string;
   lesson_id: string;
@@ -71,6 +81,9 @@ export interface PracticeQuestion {
   prompt_en: string;
   choices_ar: string[];
   choices_en: string[];
+  options_ar: ChoiceOption[];
+  options_en: ChoiceOption[];
+  content_language: ContentLanguage | null;
   curriculum_version: string;
   source_url: string;
   source_locator: string;
@@ -78,6 +91,7 @@ export interface PracticeQuestion {
 }
 
 export interface PracticeAttemptResult {
+  content_language: ContentLanguage | null;
   attempt_id: string;
   question_id: string;
   is_correct: boolean;
@@ -110,6 +124,9 @@ export interface TutorProgress {
   skills: ProgressSkill[];
   next_focus_skill: string | null;
   last_activity_at: string | null;
+  last_lesson_id?: string | null;
+  last_curriculum_version?: string | null;
+  lessons?: { lesson_id: string; attempts: number; correct_answers: number }[];
 }
 
 export type TutorRecommendationReason =
@@ -132,3 +149,28 @@ export interface TutorRecommendation {
 }
 
 export type TutorSessionMessage = TutorMessage;
+
+export interface LessonDetail extends LessonSummary {
+  content_ar: string;
+  content_en: string;
+}
+
+export interface CurriculumUnit {
+  content_language: ContentLanguage | null;
+  id: string;
+  subject_code: TutorSubject;
+  title_ar: string;
+  title_en: string;
+  position: number;
+}
+
+export interface CurriculumCatalogVersion {
+  code: string;
+  title_ar: string;
+  title_en: string;
+  grade_level: string;
+  academic_year: string;
+  content_language: ContentLanguage | null;
+  source_id: string;
+  units: CurriculumUnit[];
+}

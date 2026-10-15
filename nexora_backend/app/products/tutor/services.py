@@ -118,6 +118,10 @@ def answer_from_curriculum(
     if lesson is None:
         return _needs_context_answer(locale)
 
+    if lesson.content_language not in {"ar", "en"}:
+        raise HTTPException(status_code=422, detail="Source content language requires review")
+    locale = "ar-EG" if lesson.content_language == "ar" else "en-US"
+
     preferences = (profile.learning_preferences if profile else {}) or {}
     detail_level = preferences.get("detail_level", "standard")
     if detail_level == "concise":
@@ -149,6 +153,7 @@ def _educational_prompt(
 ) -> str:
     """Bound context and separate application instructions from input data."""
     lesson = answer.lesson
+    locale = "ar-EG" if lesson.content_language == "ar" else "en-US"
     language = "Arabic (العربية)" if locale.startswith("ar") else "English"
     context = {
         "subject_code": session.subject_code[:32],
@@ -204,6 +209,7 @@ def append_message(
     source_title = None
     answer_content = answer.content
     if answer.lesson:
+        locale = "ar-EG" if answer.lesson.content_language == "ar" else "en-US"
         source_lesson_id = answer.lesson.id
         source_title = (
             answer.lesson.title_ar if locale.startswith("ar") else answer.lesson.title_en
