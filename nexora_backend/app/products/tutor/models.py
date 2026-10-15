@@ -74,6 +74,7 @@ class CurriculumVersion(Base):
     stage: Mapped[str] = mapped_column(String(64), nullable=False)
     grade_level: Mapped[str] = mapped_column(String(64), nullable=False)
     academic_year: Mapped[str] = mapped_column(String(32), nullable=False)
+    content_language: Mapped[str | None] = mapped_column(String(16), nullable=True)
     status: Mapped[str] = mapped_column(String(32), default="draft", nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(
@@ -84,6 +85,22 @@ class CurriculumVersion(Base):
     lessons: Mapped[list["CurriculumLesson"]] = relationship(
         back_populates="version", cascade="all, delete-orphan"
     )
+
+
+class CurriculumUnit(Base):
+    """An imported curriculum unit; legacy lessons may remain ungrouped."""
+
+    __tablename__ = "tutor_curriculum_units"
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    curriculum_version: Mapped[str] = mapped_column(
+        ForeignKey("tutor_curriculum_versions.code"), index=True, nullable=False
+    )
+    subject_code: Mapped[str] = mapped_column(String(32), nullable=False)
+    content_language: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    title_ar: Mapped[str] = mapped_column(String(255), nullable=False)
+    title_en: Mapped[str] = mapped_column(String(255), nullable=False)
+    position: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
 
 class CurriculumSkill(Base):
@@ -116,6 +133,11 @@ class CurriculumLesson(Base):
         ForeignKey("tutor_curriculum_versions.code"), index=True, nullable=False
     )
     subject_code: Mapped[str] = mapped_column(String(32), index=True, nullable=False)
+    content_language: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    unit_id: Mapped[str | None] = mapped_column(
+        ForeignKey("tutor_curriculum_units.id"), index=True, nullable=True
+    )
+    position: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     title_ar: Mapped[str] = mapped_column(String(255), nullable=False)
     title_en: Mapped[str] = mapped_column(String(255), nullable=False)
     summary_ar: Mapped[str] = mapped_column(Text, nullable=False)
@@ -133,6 +155,13 @@ class CurriculumLesson(Base):
     )
 
     version: Mapped[CurriculumVersion] = relationship(back_populates="lessons")
+
+    @property
+    def effective_content_language(self) -> str | None:
+        """Prefer this lesson's declaration; only a declared version is a fallback."""
+        if self.content_language is not None:
+            return self.content_language
+        return self.version.content_language if self.version is not None else None
 
 
 class CurriculumContentChunk(Base):
@@ -170,8 +199,8 @@ class CurriculumQuestion(Base):
     question_type: Mapped[str] = mapped_column(String(32), nullable=False)
     prompt_ar: Mapped[str] = mapped_column(Text, nullable=False)
     prompt_en: Mapped[str] = mapped_column(Text, nullable=False)
-    choices_ar: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
-    choices_en: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    choices_ar: Mapped[list[str | dict[str, str]]] = mapped_column(JSON, default=list, nullable=False)
+    choices_en: Mapped[list[str | dict[str, str]]] = mapped_column(JSON, default=list, nullable=False)
     accepted_answers: Mapped[list[str]] = mapped_column(JSON, nullable=False)
     explanation_ar: Mapped[str] = mapped_column(Text, nullable=False)
     explanation_en: Mapped[str] = mapped_column(Text, nullable=False)

@@ -15,7 +15,7 @@ from app.products.tutor.curriculum import (
     get_subject_lesson as get_fixture_subject_lesson,
     list_lessons as list_fixture_lessons,
 )
-from app.products.tutor.models import CurriculumLesson, CurriculumSource, CurriculumVersion
+from app.products.tutor.models import CurriculumLesson, CurriculumSource, CurriculumVersion, CurriculumUnit
 
 
 @dataclass(frozen=True)
@@ -30,6 +30,9 @@ class ResolvedLesson:
     content_en: str
     skill_codes: tuple[str, ...]
     curriculum_version: str
+    content_language: str | None = None
+    unit_id: str | None = None
+    position: int = 0
     source_id: str | None = None
     source_name_ar: str | None = None
     source_name_en: str | None = None
@@ -67,12 +70,15 @@ def _from_db(lesson: CurriculumLesson) -> ResolvedLesson:
         content_en=lesson.content_en,
         skill_codes=tuple(lesson.skill_codes or []),
         curriculum_version=lesson.curriculum_version,
+        content_language=lesson.effective_content_language,
         source_id=source.id if source else None,
         source_name_ar=source.name_ar if source else None,
         source_name_en=source.name_en if source else None,
         source_url=lesson.source_url,
         source_locator=lesson.source_locator,
         source_status=source.license_status if source else "reviewed_official_content",
+        unit_id=lesson.unit_id,
+        position=lesson.position,
     )
 
 
@@ -102,7 +108,7 @@ def list_lessons(
     query = _published_query(db, curriculum_version)
     if subject_code:
         query = query.filter(CurriculumLesson.subject_code == subject_code)
-    lessons = query.order_by(CurriculumLesson.id).all()
+    lessons = query.order_by(CurriculumLesson.position, CurriculumLesson.id).all()
     if lessons:
         return [lesson_summary(_from_db(lesson)) for lesson in lessons]
 
@@ -156,6 +162,9 @@ def lesson_summary(lesson: ResolvedLesson) -> dict:
         "summary_en": lesson.summary_en,
         "skill_codes": list(lesson.skill_codes),
         "curriculum_version": lesson.curriculum_version,
+        "content_language": lesson.content_language,
+        "unit_id": lesson.unit_id,
+        "position": lesson.position,
         "source_id": lesson.source_id,
         "source_name_ar": lesson.source_name_ar,
         "source_name_en": lesson.source_name_en,
@@ -163,6 +172,49 @@ def lesson_summary(lesson: ResolvedLesson) -> dict:
         "source_locator": lesson.source_locator,
         "source_status": lesson.source_status,
     }
+
+
+def list_curriculum(db: Session, subject_code: str) -> list[dict]:
+    """Only actual published metadata; no fixture grade or official claims."""
+    versions = (
+        db.query(CurriculumVersion)
+        .join(CurriculumSource, CurriculumVersion.source_id == CurriculumSource.id)
+        .filter(
+            CurriculumVersion.status == "published",
+            CurriculumSource.is_active.is_(True),
+            CurriculumSource.license_status == "approved",
+            CurriculumVersion.code.in_(
+                db.query(CurriculumLesson.curriculum_version).filter(
+                    CurriculumLesson.subject_code == subject_code,
+                    CurriculumLesson.status == "published",
+                )
+            ),
+        ).order_by(CurriculumVersion.code).all()
+    )
+    result = []
+    for version in versions:
+        unit_ids = db.query(CurriculumLesson.unit_id).filter(
+            CurriculumLesson.curriculum_version == version.code,
+            CurriculumLesson.subject_code == subject_code,
+            CurriculumLesson.status == "published",
+        )
+        units = db.query(CurriculumUnit).filter(
+            CurriculumUnit.curriculum_version == version.code,
+            CurriculumUnit.subject_code == subject_code,
+            CurriculumUnit.id.in_(unit_ids),
+        ).order_by(CurriculumUnit.position, CurriculumUnit.id).all()
+        result.append({
+            "code": version.code, "title_ar": version.title_ar,
+            "title_en": version.title_en, "grade_level": version.grade_level,
+            "academic_year": version.academic_year, "source_id": version.source_id,
+            "content_language": version.content_language,
+            "units": [{"id": unit.id, "subject_code": unit.subject_code,
+                       "title_ar": unit.title_ar, "title_en": unit.title_en,
+                       "position": unit.position,
+                       "content_language": unit.content_language if unit.content_language is not None else version.content_language}
+                      for unit in units],
+        })
+    return result
 
 
 def _fixture_from_dict(item: dict) -> FixtureLesson:

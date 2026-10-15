@@ -41,6 +41,9 @@ def client():
     db.add(other_user)
     db.commit()
     db.refresh(user)
+    from app.tests.tutor.test_tutor_content import _declared_fixture_bundle
+    from app.products.tutor.importer import import_curriculum_bundle
+    import_curriculum_bundle(db, _declared_fixture_bundle())
 
     def override_db():
         try:
@@ -94,6 +97,7 @@ def practice_client():
         stage="secondary",
         grade_level="secondary-1",
         academic_year="2025-2026",
+        content_language="ar",
         status="published",
     )
     lesson = CurriculumLesson(
@@ -281,7 +285,8 @@ def test_message_checks_user_and_session_before_inference(client, case):
         f"/api/v1/tutor/sessions/{session_id}/messages",
         json={"content": "Explain", "user_id": 1},
     )
-    assert response.status_code == (401 if case in {"inactive", "missing_user"} else 404)
+    expected_status = {"inactive": 403, "missing_user": 401}.get(case, 404)
+    assert response.status_code == expected_status
     client.tutor_gateway.generate.assert_not_called()
     assert client.tutor_db.query(LearningMessage).count() == 0
 
