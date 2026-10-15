@@ -38,7 +38,7 @@ jobs:
         shell: bash
         run: |
           python -m compileall -q nexora_backend/app
-          python -c "import sys; sys.path.insert(0, 'nexora_backend'); from app.main import app; print(app.title)"
+          python -c "import os, secrets, sys; os.environ['SECRET_KEY'] = secrets.token_urlsafe(48); os.environ['DATABASE_URL'] = 'sqlite://'; sys.path.insert(0, 'nexora_backend'); from app.main import app; print(app.title)"
 
       - name: Create clean deployment package
         shell: bash

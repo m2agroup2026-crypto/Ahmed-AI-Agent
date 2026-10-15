@@ -2,6 +2,7 @@ import os
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 
 DATABASE_URL = os.getenv(
@@ -20,6 +21,8 @@ if DATABASE_URL.startswith("sqlite"):
     engine_kwargs["connect_args"] = {
         "check_same_thread": False,
     }
+    if DATABASE_URL in {"sqlite://", "sqlite:///:memory:"}:
+        engine_kwargs["poolclass"] = StaticPool
 
 # PostgreSQL configuration.
 # Azure Database for PostgreSQL requires secure TLS/SSL connections.

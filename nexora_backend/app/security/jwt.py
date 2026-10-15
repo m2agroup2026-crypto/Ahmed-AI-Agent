@@ -1,4 +1,6 @@
 from datetime import datetime, UTC, timedelta
+import logging
+from math import isfinite
 
 from jose import JWTError, jwt
 
@@ -6,6 +8,7 @@ from app.config.settings import settings
 
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
+logger = logging.getLogger(__name__)
 
 
 def create_access_token(data: dict) -> str:
@@ -45,20 +48,28 @@ def verify_token(token: str) -> dict | None:
             token,
             settings.SECRET_KEY,
             algorithms=[settings.ALGORITHM],
+            options={
+                "require_exp": True,
+                "verify_exp": True,
+                "verify_signature": True,
+            },
         )
+
+        # NumericDate must be a number, not a boolean or a numeric string.
+        expires_at = payload.get("exp")
+        if (
+            isinstance(expires_at, bool)
+            or not isinstance(expires_at, (int, float))
+            or (isinstance(expires_at, float) and not isfinite(expires_at))
+        ):
+            return None
 
         return payload
 
-    except JWTError as exc:
-        print(
-            f"NEXORA JWT validation error: "
-            f"{exc.__class__.__name__}: {exc}"
-        )
+    except JWTError:
+        logger.warning("JWT validation failed")
         return None
 
-    except Exception as exc:
-        print(
-            f"NEXORA JWT unexpected error: "
-            f"{exc.__class__.__name__}: {exc}"
-        )
+    except Exception:
+        logger.error("JWT validation failed unexpectedly")
         return None
