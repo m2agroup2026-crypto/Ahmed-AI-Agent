@@ -9,6 +9,8 @@ from alembic import context
 from app.core.database.config import database_config
 
 from app.database.base import Base
+from app.products.tutor.classroom import models as classroom_models
+from app.products.tutor.live import models as live_models
 from app.models import User, Role, Permission, RolePermission
 
 from app.billing.models import (

@@ -29,6 +29,7 @@ export default function TutorWebHome() {
   return (
     <main className="shell">
       <header className="topbar">
+        <a href="/classroom">Teacher &amp; student classrooms</a>
         <div>
           <span className="eyebrow">AQLITH / LEARN</span>
           <h1>مركز متابعة التعلم</h1>
