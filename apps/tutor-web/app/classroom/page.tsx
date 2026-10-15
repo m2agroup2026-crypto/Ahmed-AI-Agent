@@ -54,7 +54,7 @@ export default function ClassroomPage() {
   }, []);
 
   return <main className="shell classroom" dir="ltr">
-    <header className="topbar"><div><span className="eyebrow">AQLITH / CLASSROOM</span><h1>Learn together</h1></div><a href="/">Curriculum</a></header>
+    <header className="topbar"><div><span className="eyebrow">AQLITH / CLASSROOM</span><h1>Learn together</h1></div><a href="/">Curriculum</a><a href="/classroom/live">Live classes / الحصص المباشرة</a></header>
     <p>Teacher-led mathematics lessons and original timed assessments.</p>
     <p role="status" aria-live="polite">{busy ? "Saving…" : message}</p>
     {!identity ? <form className="lesson-card" onSubmit={(event) => {
