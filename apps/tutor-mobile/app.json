@@ -4,7 +4,11 @@
     "slug": "nexora-tutor",
     "version": "0.1.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/brand/aqlith-app-icon.png",
+    "android": {
+      "icon": "./assets/brand/aqlith-app-icon.png"
+    },
     "scheme": "nexora-tutor",
     "assetBundlePatterns": ["**/*"]
   }

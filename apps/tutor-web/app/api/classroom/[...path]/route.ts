@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { trustedOrigins, validRequestOrigin } from "../../../../lib/request-origin";
 
 const API_URL = process.env.TUTOR_API_URL ?? "http://localhost:8000";
 const COOKIE = "nexora_access_token";
@@ -14,7 +15,9 @@ async function handle(request: NextRequest, context: { params: Promise<{ path: s
   const { path } = await context.params;
   const resource = path.join("/");
   const method = request.method;
-  if (method !== "GET" && request.headers.get("origin") !== request.nextUrl.origin) {
+  // nextUrl can contain the bind address. Validate browser authority against an
+  // explicit allowlist, not against an attacker-controlled matching Host/Origin.
+  if (!validRequestOrigin(request.headers.get("host"), request.headers.get("origin"), method, trustedOrigins(process.env))) {
     return NextResponse.json({ detail: "Invalid request origin" }, { status: 403 });
   }
   const session = resource === "session";

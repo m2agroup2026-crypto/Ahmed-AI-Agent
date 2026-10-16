@@ -5,6 +5,7 @@ import type { Classroom, ClassroomIdentity } from "@contracts/classroom";
 import type { LiveGrant, LiveParticipant, LiveSession } from "@contracts/live";
 import { controlState, mediaPermissions, needsGrantRenewal, type ControlConnection } from "../../../lib/live-client";
 import "./live.css";
+import { usePreferences } from "../../preferences";
 
 const copy = {
   en: {
@@ -64,7 +65,7 @@ function localTime() {
 }
 
 export default function LiveClassroomPage() {
-  const [locale, setLocale] = useState<"ar" | "en">("ar");
+  const { language: locale, setLanguage: setLocale } = usePreferences();
   const t = copy[locale];
   const [identity, setIdentity] = useState<ClassroomIdentity | null>(null);
   const [classes, setClasses] = useState<Classroom[]>([]);
@@ -178,9 +179,10 @@ export default function LiveClassroomPage() {
       <p>{identity.name}</p>
       <label>{t.classes}<select value={classId} disabled={busy} onChange={(event) => {
         const id = event.target.value;
-        void run(async () => { await leaveCurrent(); setSelectedId(""); setSession(null); setParticipants([]); setClassId(id); });
+        if (id === classId) return;
+        void run(async () => { await leaveCurrent(); setSelectedId(""); setSession(null); setParticipants([]); setSessions([]); setClassId(id); });
       }}><option value="">—</option>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-      {teacher && classId && <form className="live-card" onSubmit={(event) => {
+      {teacher && classId && <form method="post" className="live-card" onSubmit={(event) => {
         event.preventDefault(); const data = new FormData(event.currentTarget);
         void run(async () => {
           const begins = new Date(String(data.get("starts")));

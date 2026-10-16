@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Text, TextInput } from "../typography";
 
-import { theme } from "../theme";
+import { useThemedStyles, type Theme } from "../theme";
+import { usePreferences } from "../preferences";
+import { BrandLogo } from "../BrandLogo";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:8000";
 
 type Props = { onLogin: (token: string) => void };
 
 export function LoginScreen({ onLogin }: Props) {
+  const { theme, t } = usePreferences();
+  const styles = useThemedStyles(createStyles);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,50 +41,56 @@ export function LoginScreen({ onLogin }: Props) {
   }
 
   return (
-    <View style={styles.screen}>
+    <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       <View style={styles.brand}>
-        <Text style={styles.eyebrow}>AQLITH Learn</Text>
-        <Text style={styles.title}>ابدأ رحلة التعلم</Text>
-        <Text style={styles.subtitle}>سجّل الدخول للوصول إلى دروسك وجلساتك.</Text>
+        <BrandLogo />
+        <Text style={styles.title}>{t("ابدأ رحلة التعلم", "Start your learning journey")}</Text>
+        <Text style={styles.subtitle}>{t("سجّل الدخول للوصول إلى دروسك وجلساتك.", "Sign in to access your lessons and sessions.")}</Text>
       </View>
       <View style={styles.form}>
         <TextInput
           value={email}
           onChangeText={setEmail}
-          placeholder="البريد الإلكتروني"
+          placeholder={t("البريد الإلكتروني", "Email")}
+          accessibilityLabel={t("البريد الإلكتروني", "Email")}
           placeholderTextColor={theme.colors.muted}
           autoCapitalize="none"
           keyboardType="email-address"
-          textAlign="right"
+          textAlign="left"
+          autoComplete="email"
           style={styles.input}
         />
         <TextInput
           value={password}
           onChangeText={setPassword}
-          placeholder="كلمة المرور"
+          placeholder={t("كلمة المرور", "Password")}
+          accessibilityLabel={t("كلمة المرور", "Password")}
           placeholderTextColor={theme.colors.muted}
           secureTextEntry
-          textAlign="right"
+          textAlign="left"
+          autoComplete="current-password"
           style={styles.input}
         />
-        {error && <Text style={styles.error}>{error}</Text>}
-        <Pressable style={styles.button} onPress={login} disabled={loading}>
-          {loading ? <ActivityIndicator color={theme.colors.white} /> : <Text style={styles.buttonText}>دخول</Text>}
+        {error && <Text accessibilityRole="alert" style={styles.error}>{t("تعذر تسجيل الدخول. تحقق من البيانات والاتصال ثم أعد المحاولة.", "Sign-in failed. Check your details and connection, then retry.")}</Text>}
+        <Pressable accessibilityRole="button" style={styles.button} onPress={login} disabled={loading}>
+          {loading ? <ActivityIndicator color={theme.colors.onPrimary} /> : <Text style={styles.buttonText}>{t("دخول", "Sign in")}</Text>}
         </Pressable>
       </View>
-    </View>
+    </ScrollView></KeyboardAvoidingView>
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: theme.colors.surface, padding: 24, justifyContent: "center" },
-  brand: { backgroundColor: theme.colors.navy, borderRadius: 24, padding: 26, marginBottom: 18 },
-  eyebrow: { color: theme.colors.gold, fontSize: 12, fontWeight: "800", letterSpacing: 1.4, textAlign: "right" },
-  title: { color: theme.colors.white, fontSize: 30, fontWeight: "800", textAlign: "right", marginTop: 18 },
-  subtitle: { color: "#c8d5e5", fontSize: 15, lineHeight: 24, textAlign: "right", marginTop: 10 },
-  form: { backgroundColor: theme.colors.white, borderRadius: 22, padding: 18 },
-  input: { backgroundColor: theme.colors.surface, borderRadius: 14, paddingHorizontal: 14, height: 52, color: theme.colors.ink, marginBottom: 12 },
-  button: { backgroundColor: theme.colors.teal, borderRadius: 14, height: 52, alignItems: "center", justifyContent: "center", marginTop: 4 },
-  buttonText: { color: theme.colors.white, fontSize: 16, fontWeight: "800" },
-  error: { color: theme.colors.danger, textAlign: "right", marginBottom: 10 },
+const createStyles = (theme: Theme, rtl: boolean) => StyleSheet.create({
+  screen: { flex: 1, backgroundColor: theme.colors.background },
+  content: { flexGrow: 1, padding: 24, justifyContent: "center" },
+  brand: { backgroundColor: theme.colors.surface, borderRadius: 24, padding: 26, marginBottom: 18 },
+  eyebrow: { color: theme.colors.heroAccent, fontSize: 12, fontWeight: "800", letterSpacing: 1.4, textAlign: rtl ? "right" : "left" },
+  title: { color: theme.colors.text, fontSize: 30, fontWeight: "800", textAlign: rtl ? "right" : "left", marginTop: 18 },
+  subtitle: { color: theme.colors.muted, fontSize: 15, lineHeight: 24, textAlign: rtl ? "right" : "left", marginTop: 10 },
+  form: { backgroundColor: theme.colors.surface, borderRadius: 22, padding: 18 },
+  input: { backgroundColor: theme.colors.background, borderRadius: 14, paddingHorizontal: 14, minHeight: 52, color: theme.colors.text, marginBottom: 12, writingDirection: "ltr" },
+  button: { backgroundColor: theme.colors.primary, borderRadius: 14, minHeight: 52, alignItems: "center", justifyContent: "center", marginTop: 4 },
+  buttonText: { color: theme.colors.onPrimary, fontSize: 16, fontWeight: "800" },
+  error: { color: theme.colors.error, textAlign: rtl ? "right" : "left", marginBottom: 10 },
 });

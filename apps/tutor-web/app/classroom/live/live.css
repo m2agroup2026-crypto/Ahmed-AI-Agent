@@ -4,15 +4,18 @@
 .live-classroom h3 { font-size: 21px; margin: 16px 0; }
 .live-classroom p { margin: 12px 0; line-height: 1.7; overflow-wrap: anywhere; }
 .live-classroom button, .live-classroom input, .live-classroom select { font: inherit; }
-.live-classroom button { min-height: 44px; padding: 10px 16px; margin: 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--navy); color: white; cursor: pointer; }
+.live-classroom button { min-height: 44px; padding: 10px 16px; margin: 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--primary); color: var(--onPrimary); cursor: pointer; }
 .live-classroom button:disabled { opacity: .5; cursor: default; }
 .live-classroom label { display: block; margin: 16px 0; }
-.live-classroom input:not([type="checkbox"]), .live-classroom select { display: block; width: 100%; min-height: 44px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: white; }
-.live-classroom .live-card { background: white; border: 1px solid var(--line); border-radius: 18px; padding: 24px; margin: 20px 0; }
-.live-classroom .live-notice { padding: 16px; border-inline-start: 4px solid var(--teal); background: #e9f5f4; }
+.live-classroom input:not([type="checkbox"]), .live-classroom select { display: block; width: 100%; min-height: 44px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.live-classroom .live-card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 24px; margin: 20px 0; }
+.live-classroom .live-notice { padding: 16px; border-inline-start: 4px solid var(--teal); background: var(--accentSurface); }
 .live-classroom .live-media { border: 1px dashed var(--line); padding: 18px; margin: 16px 0; }
 .live-classroom .live-person { padding: 12px 0; border-bottom: 1px solid var(--line); }
 .live-classroom video { width: 100%; max-height: 500px; background: var(--navy); }
+.live-classroom .topbar a { display: inline-flex; align-items: center; min-height: 44px; }
+.live-classroom input[type="checkbox"] { width: 20px; height: 20px; vertical-align: middle; }
+.live-classroom label:has(input[type="checkbox"]) { min-height: 44px; align-content: center; }
 @media (max-width: 600px) {
   .live-classroom .live-card { padding: 16px; }
   .live-classroom button { max-width: 100%; }

@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Text, TextInput } from "../typography";
 
 import type { LessonSummary } from "@contracts/tutor";
 import { TutorApi } from "../api/client";
-import { theme } from "../theme";
+import { useThemedStyles, type Theme } from "../theme";
+import { usePreferences } from "../preferences";
+import { officialText, readingStyle } from "../learning";
 
 type Props = { api: TutorApi; lesson: LessonSummary; onBack: () => void; onPractice: () => void };
 
 export function TutorSessionScreen({ api, lesson, onBack, onPractice }: Props) {
+  const { theme, t, language, rtl } = usePreferences();
+  const styles = useThemedStyles(createStyles);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState<string | null>(null);
@@ -36,67 +41,68 @@ export function TutorSessionScreen({ api, lesson, onBack, onPractice }: Props) {
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
-        <Pressable onPress={onBack} accessibilityLabel="العودة">
+        <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel={t("العودة", "Back")} style={{ minHeight: 44, minWidth: 44, alignItems: "center" }}>
           <Text style={styles.back}>›</Text>
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.subject}>{lesson.title_ar}</Text>
-          <Text style={styles.caption}>جلسة Tutor مرتبطة بالدرس</Text>
+          <Text style={[styles.subject, readingStyle(lesson.content_language ?? language)]}>{officialText(lesson.content_language, lesson.title_ar, lesson.title_en) ?? t("لغة المحتوى غير محددة", "Content language is not declared")}</Text>
+          <Text style={styles.caption}>{t("جلسة Tutor مرتبطة بالدرس", "Tutor session for this lesson")}</Text>
         </View>
       </View>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.lessonCard}>
-          <Text style={styles.lessonLabel}>ملخص الدرس</Text>
-          <Text style={styles.lessonText}>{lesson.summary_ar}</Text>
-          <Pressable style={styles.practiceButton} onPress={onPractice}>
-            <Text style={styles.practiceButtonText}>تدرّب على الدرس</Text>
+          <Text style={styles.lessonLabel}>{t("ملخص الدرس", "Lesson summary")}</Text>
+          <Text style={[styles.lessonText, readingStyle(lesson.content_language ?? language)]}>{officialText(lesson.content_language, lesson.summary_ar, lesson.summary_en) ?? t("لغة المحتوى غير محددة", "Content language is not declared")}</Text>
+          <Pressable accessibilityRole="button" style={styles.practiceButton} onPress={onPractice}>
+            <Text style={styles.practiceButtonText}>{t("تدرّب على الدرس", "Practice this lesson")}</Text>
           </Pressable>
         </View>
         {answer && (
           <View style={styles.answerCard}>
             <Text style={styles.answerLabel}>Tutor</Text>
-            <Text style={styles.answer}>{answer}</Text>
+            <Text style={[styles.answer, readingStyle(lesson.content_language ?? language)]}>{answer}</Text>
           </View>
         )}
-        {error && <Text style={styles.error}>{error}</Text>}
+        {error && <Text accessibilityRole="alert" style={styles.error}>{t("تعذر إرسال السؤال. تحقق من الاتصال ثم أعد المحاولة.", "Your question could not be sent. Check your connection and retry.")}</Text>}
       </ScrollView>
       <View style={styles.composer}>
         <TextInput
           value={question}
           onChangeText={setQuestion}
-          placeholder="اكتب سؤالك عن الدرس..."
+          placeholder={t("اكتب سؤالك عن الدرس...", "Ask about this lesson...")}
+          accessibilityLabel={t("سؤالك عن الدرس", "Your lesson question")}
           placeholderTextColor={theme.colors.muted}
           multiline
           style={styles.input}
-          textAlign="right"
+          textAlign={rtl ? "right" : "left"}
         />
-        <Pressable style={styles.send} onPress={askTutor} disabled={sending}>
-          {sending ? <ActivityIndicator color={theme.colors.white} /> : <Text style={styles.sendText}>اسأل</Text>}
+        <Pressable accessibilityRole="button" style={styles.send} onPress={askTutor} disabled={sending}>
+          {sending ? <ActivityIndicator color={theme.colors.onPrimary} /> : <Text style={styles.sendText}>{t("اسأل", "Ask")}</Text>}
         </Pressable>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: theme.colors.surface },
-  header: { backgroundColor: theme.colors.navy, padding: 20, paddingTop: 58, flexDirection: "row", alignItems: "center" },
-  back: { color: theme.colors.white, fontSize: 34, transform: [{ rotate: "180deg" }] },
+const createStyles = (theme: Theme, rtl: boolean) => StyleSheet.create({
+  screen: { flex: 1, backgroundColor: theme.colors.background },
+  header: { backgroundColor: theme.colors.hero, padding: 20, paddingTop: 58, flexDirection: rtl ? "row-reverse" : "row", alignItems: "center" },
+  back: { color: theme.colors.heroText, fontSize: 34, transform: [{ rotate: rtl ? "0deg" : "180deg" }] },
   headerCopy: { flex: 1, marginLeft: 12 },
-  subject: { color: theme.colors.white, fontSize: 20, fontWeight: "800", textAlign: "right" },
-  caption: { color: "#c8d5e5", fontSize: 12, textAlign: "right", marginTop: 4 },
+  subject: { color: theme.colors.heroText, fontSize: 20, fontWeight: "800", textAlign: rtl ? "right" : "left" },
+  caption: { color: theme.colors.heroMuted, fontSize: 12, textAlign: rtl ? "right" : "left", marginTop: 4 },
   content: { padding: 20, paddingBottom: 30 },
-  lessonCard: { backgroundColor: theme.colors.white, borderRadius: theme.radius, padding: 20, marginBottom: 16 },
-  lessonLabel: { color: theme.colors.teal, fontSize: 12, fontWeight: "700", textAlign: "right" },
-  lessonText: { color: theme.colors.ink, fontSize: 16, lineHeight: 28, textAlign: "right", marginTop: 10 },
-  answerCard: { backgroundColor: "#e7f5f2", borderRadius: theme.radius, padding: 20, marginBottom: 16 },
-  answerLabel: { color: theme.colors.teal, fontSize: 12, fontWeight: "700", textAlign: "right" },
-  answer: { color: theme.colors.ink, fontSize: 16, lineHeight: 28, textAlign: "right", marginTop: 10 },
-  error: { color: theme.colors.danger, textAlign: "right", lineHeight: 22 },
-  composer: { backgroundColor: theme.colors.white, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: "#d5dfe8", padding: 12, flexDirection: "row-reverse", alignItems: "flex-end" },
-  input: { flex: 1, minHeight: 48, maxHeight: 110, backgroundColor: theme.colors.surface, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10, color: theme.colors.ink },
-  send: { backgroundColor: theme.colors.teal, borderRadius: 14, minWidth: 64, height: 48, justifyContent: "center", alignItems: "center", marginRight: 8 },
-  sendText: { color: theme.colors.white, fontWeight: "800" },
-  practiceButton: { backgroundColor: theme.colors.navy, borderRadius: 14, minHeight: 48, alignItems: "center", justifyContent: "center", marginTop: 18 },
-  practiceButtonText: { color: theme.colors.white, fontWeight: "800" },
+  lessonCard: { backgroundColor: theme.colors.surface, borderRadius: theme.radius, padding: 20, marginBottom: 16 },
+  lessonLabel: { color: theme.colors.primary, fontSize: 12, fontWeight: "700", textAlign: rtl ? "right" : "left" },
+  lessonText: { color: theme.colors.text, fontSize: 16, lineHeight: 28, textAlign: rtl ? "right" : "left", marginTop: 10 },
+  answerCard: { backgroundColor: theme.colors.successSurface, borderRadius: theme.radius, padding: 20, marginBottom: 16 },
+  answerLabel: { color: theme.colors.primary, fontSize: 12, fontWeight: "700", textAlign: rtl ? "right" : "left" },
+  answer: { color: theme.colors.text, fontSize: 16, lineHeight: 28, textAlign: rtl ? "right" : "left", marginTop: 10 },
+  error: { color: theme.colors.error, textAlign: rtl ? "right" : "left", lineHeight: 22 },
+  composer: { backgroundColor: theme.colors.surface, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: theme.colors.border, padding: 12, flexDirection: rtl ? "row-reverse" : "row", alignItems: "flex-end" },
+  input: { flex: 1, minHeight: 48, maxHeight: 110, backgroundColor: theme.colors.background, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10, color: theme.colors.text },
+  send: { backgroundColor: theme.colors.primary, borderRadius: 14, minWidth: 64, height: 48, justifyContent: "center", alignItems: "center", marginRight: 8 },
+  sendText: { color: theme.colors.onPrimary, fontWeight: "800" },
+  practiceButton: { backgroundColor: theme.colors.hero, borderRadius: 14, minHeight: 48, alignItems: "center", justifyContent: "center", marginTop: 18 },
+  practiceButtonText: { color: theme.colors.heroText, fontWeight: "800" },
 });

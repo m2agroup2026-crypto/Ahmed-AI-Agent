@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { useMemo } from "react";
@@ -10,6 +10,11 @@ import { HomeScreen } from "./src/screens/HomeScreen";
 import { LoginScreen } from "./src/screens/LoginScreen";
 import { TutorSessionScreen } from "./src/screens/TutorSessionScreen";
 import { PracticeScreen } from "./src/screens/PracticeScreen";
+import { PreferenceControls, PreferencesProvider, usePreferences } from "./src/preferences";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useFonts } from "expo-font";
+import { ActivityIndicator, Text } from "react-native";
+import { cairoFonts } from "./src/typography";
 
 type RootStackParamList = {
   Home: undefined;
@@ -24,18 +29,28 @@ type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  // Authentication UI is intentionally supplied by the shared Nexora identity flow.
-  // The shell receives a token through the environment until the login screen lands.
-  const [token, setToken] = useState(process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? "");
+  const [loaded, error] = useFonts(cairoFonts);
+  if (error) return <SafeAreaProvider><Text accessibilityRole="alert">تعذر تحميل خط Cairo. / Cairo could not be loaded.</Text></SafeAreaProvider>;
+  if (!loaded) return <ActivityIndicator accessibilityLabel="تحميل الخط / Loading font" />;
+  return <SafeAreaProvider><PreferencesProvider><AppContent /></PreferencesProvider></SafeAreaProvider>;
+}
+
+function AppContent() {
+  const { theme, dark, rtl } = usePreferences();
+  // Authenticate on the device; public Expo variables are bundled into the app.
+  const [token, setToken] = useState("");
   const api = useMemo(() => new TutorApi(token), [token]);
 
   if (!token) {
-    return <LoginScreen onLogin={setToken} />;
+    return <><StatusBar style={dark ? "light" : "dark"} /><PreferenceControls /><LoginScreen onLogin={setToken} /></>;
   }
 
   return (
-    <NavigationContainer>
-      <StatusBar style="light" />
+    <><PreferenceControls /><NavigationContainer direction={rtl ? "rtl" : "ltr"} theme={{ ...(dark ? DarkTheme : DefaultTheme), colors: {
+      ...(dark ? DarkTheme : DefaultTheme).colors, background: theme.colors.background, card: theme.colors.surface,
+      text: theme.colors.text, primary: theme.colors.primary, border: theme.colors.border,
+    } }}>
+      <StatusBar style={dark ? "light" : "dark"} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home">
           {({ navigation }) => (
@@ -82,6 +97,6 @@ export default function App() {
           )}
         </Stack.Screen>
       </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer></>
   );
 }
