@@ -1,15 +1,49 @@
 :root {
-  --navy: #0b1d35;
-  --ink: #10233f;
-  --teal: #178b88;
-  --gold: #d6a84f;
-  --surface: #f5f8fb;
-  --muted: #6d7b91;
-  --line: #dce5ee;
+  --navy: var(--hero);
+  --ink: var(--text);
+  --teal: var(--primary);
+  --gold: var(--heroAccent);
+  --line: var(--border);
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--surface); color: var(--ink); font-family: Arial, "Noto Sans Arabic", sans-serif; }
+.classroom .lesson-card { margin: 18px 0; min-height: auto; }
+.classroom label { display: block; margin: 14px 0; }
+.classroom input:not([type="checkbox"]), .classroom textarea { display: block; width: 100%; max-width: 660px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; }
+.classroom textarea { min-height: 130px; }
+.classroom button { padding: 12px 18px; margin-block: 8px; margin-inline: 0 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--primary); color: var(--onPrimary); cursor: pointer; }
+.classroom button:disabled { opacity: .5; cursor: default; }
+.classroom table { width: 100%; text-align: start; border-collapse: collapse; }
+.classroom td, .classroom th { padding: 12px; border-bottom: 1px solid var(--line); }
+.classroom p { margin: 12px 0; overflow-wrap: anywhere; }
+.classroom button, .classroom input, .classroom textarea { font: inherit; font-size: 16px; }
+.classroom button, .classroom input:not([type="checkbox"]), .classroom .topbar a { min-height: 44px; }
+.classroom .topbar a { display: inline-flex; align-items: center; }
+.classroom fieldset { min-width: 0; }
+.classroom td, .classroom th { overflow-wrap: anywhere; }
+.classroom table { table-layout: fixed; }
+.classroom input[type="checkbox"] { width: 20px; height: 20px; vertical-align: middle; }
+.classroom label:has(input[type="checkbox"]) { min-height: 44px; align-content: center; }
+body { margin: 0; background: var(--background); color: var(--ink); font-family: var(--font-cairo), Arial, "Cambria Math", sans-serif; }
+a { color: var(--primary); }
+button, input, textarea, select { font: inherit; }
+input, textarea, select { color: var(--text); background: var(--surface); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+input[type="checkbox"] { accent-color: var(--primary); }
+.preferences { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; max-width: 1180px; margin: auto; padding: 16px; border-bottom: 1px solid var(--border); }
+.preferences div { display: flex; gap: 8px; }
+.brand-link { display: flex; align-items: center; min-height: 44px; max-width: 100%; }
+.brand-logo { display: block; width: 180px; max-width: 100%; padding: 8px; border-radius: 10px; background: var(--brand-light); }
+.brand-logo img { display: block; width: 100%; height: auto; object-fit: contain; }
+.brand-logo .brand-logo-dark { display: none; }
+html[data-theme="dark"] .brand-logo { background: var(--brand-dark); }
+html[data-theme="dark"] .brand-logo .brand-logo-light { display: none; }
+html[data-theme="dark"] .brand-logo .brand-logo-dark { display: block; }
+.preferences button, .preferences select { min-width: 44px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px; color: var(--text); background: var(--surface); cursor: pointer; }
+.preferences button[aria-pressed="true"] { background: var(--primary); color: var(--onPrimary); }
+.preferences label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.preference-error { color: var(--error); padding: 12px; }
+.topbar a { display: inline-flex; min-height: 44px; align-items: center; }
 .shell { max-width: 1180px; margin: 0 auto; padding: 36px 24px 72px; }
 .topbar, .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
 .topbar { padding-bottom: 30px; }
@@ -18,22 +52,22 @@ h1 { font-size: clamp(28px, 4vw, 46px); margin-top: 12px; }
 h2 { font-size: clamp(28px, 4vw, 54px); line-height: 1.15; max-width: 660px; margin-top: 18px; }
 h3 { font-size: 30px; margin-top: 10px; }
 h4 { font-size: 22px; margin-top: 12px; }
-.eyebrow { color: var(--navy); font-size: 11px; font-weight: 800; letter-spacing: .16em; }
+.eyebrow { color: var(--text); font-size: 11px; font-weight: 800; letter-spacing: .16em; }
 .gold { color: var(--gold); }
 .teal { color: var(--teal); }
 .status, .hint, .version { color: var(--muted); font-size: 13px; }
-.status { border: 1px solid var(--line); border-radius: 999px; padding: 10px 14px; background: white; }
-.hero { display: flex; align-items: center; justify-content: space-between; gap: 32px; background: var(--navy); color: white; border-radius: 28px; padding: clamp(28px, 5vw, 58px); min-height: 300px; overflow: hidden; }
-.hero p { color: #c8d5e5; font-size: 17px; line-height: 1.8; max-width: 650px; margin-top: 18px; }
-.hero-mark { display: grid; place-items: center; width: 150px; height: 150px; border: 1px solid rgba(214,168,79,.7); border-radius: 50%; color: var(--gold); font-size: 78px; font-weight: 800; }
+.status { border: 1px solid var(--line); border-radius: 999px; padding: 10px 14px; background: var(--surface); }
+.hero { display: flex; align-items: center; justify-content: space-between; gap: 32px; background: var(--hero); color: var(--heroText); border-radius: 28px; padding: clamp(28px, 5vw, 58px); min-height: 300px; overflow: hidden; }
+.hero p { color: var(--heroMuted); font-size: 17px; line-height: 1.8; max-width: 650px; margin-top: 18px; }
+.hero-mark { display: grid; place-items: center; width: 150px; height: 150px; border: 1px solid var(--heroAccent); border-radius: 50%; color: var(--gold); font-size: 78px; font-weight: 800; flex-shrink: 0; }
 .section { margin-top: 48px; }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 22px; }
-.lesson-card { background: white; border: 1px solid var(--line); border-radius: 20px; padding: 24px; min-height: 220px; box-shadow: 0 12px 32px rgba(16,35,63,.06); }
+.lesson-card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 24px; min-height: 220px; box-shadow: 0 12px 32px color-mix(in srgb, var(--shadow) 6%, transparent); min-width: 0; overflow-wrap: anywhere; }
 .subject { color: var(--teal); font-weight: 800; font-size: 13px; }
 .lesson-card p { color: var(--muted); line-height: 1.8; margin-top: 12px; }
 .version { display: inline-block; margin-top: 24px; }
-.empty { border: 1px dashed var(--line); border-radius: 18px; padding: 34px; margin-top: 22px; color: var(--muted); background: white; text-align: center; }
-.empty.danger { color: #a64545; }
+.empty { border: 1px dashed var(--line); border-radius: 18px; padding: 34px; margin-top: 22px; color: var(--muted); background: var(--surface); text-align: center; }
+.empty.danger { color: var(--error); }
 @media (max-width: 760px) {
   .shell { padding: 24px 16px 48px; }
   .topbar, .section-heading, .hero { align-items: flex-start; flex-direction: column; }
