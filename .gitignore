@@ -6,3 +6,11 @@ __pycache__/
 .vscode/
 agent_backup.py
 agent_v04_backup.py
+.venv-voice/
+apps/tutor-mobile/dist-voice-qa/
+apps/tutor-mobile/dist-voice-qa-android/
+/docs/qa/voice/
+/docs/VOICE_ENGINE_MVP.md
+/docs/VOICE_ENGINE_FINAL_VALIDATION.md
+.pytest_cache/
+/apps/tutor-mobile/.expo/

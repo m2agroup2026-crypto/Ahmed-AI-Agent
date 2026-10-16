@@ -5,6 +5,7 @@ from app.api.ai.router import router as ai_router
 from app.products.tutor.api import router as tutor_router
 from app.products.tutor.classroom.api import router as classroom_router
 from app.products.tutor.live.api import router as live_router
+from app.voice.api import router as voice_router
 
 
 app = FastAPI(
@@ -19,6 +20,7 @@ app.include_router(ai_router)
 app.include_router(tutor_router)
 app.include_router(classroom_router)
 app.include_router(live_router)
+app.include_router(voice_router)
 
 
 @app.get("/health")

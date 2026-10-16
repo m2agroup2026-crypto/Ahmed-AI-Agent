@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "../typography";
 
@@ -6,29 +6,31 @@ import type { LessonSummary } from "@contracts/tutor";
 import { TutorApi } from "../api/client";
 import { useThemedStyles, type Theme } from "../theme";
 import { usePreferences } from "../preferences";
-import { officialText, readingStyle } from "../learning";
+import { officialAnswerLocale, officialText, readingStyle } from "../learning";
 
-type Props = { api: TutorApi; lesson: LessonSummary; onBack: () => void; onPractice: () => void };
+type Props = { api: TutorApi; lesson: LessonSummary; initialQuestion?: string; onBack: () => void; onPractice: () => void };
 
-export function TutorSessionScreen({ api, lesson, onBack, onPractice }: Props) {
+export function TutorSessionScreen({ api, lesson, initialQuestion, onBack, onPractice }: Props) {
   const { theme, t, language, rtl } = usePreferences();
   const styles = useThemedStyles(createStyles);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [question, setQuestion] = useState("");
+  const [question, setQuestion] = useState(initialQuestion ?? "");
+  useEffect(() => { setQuestion(initialQuestion ?? ""); setSessionId(null); setAnswer(null); }, [lesson.id, initialQuestion]);
   const [answer, setAnswer] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const answerLocale = officialAnswerLocale(lesson);
 
   async function askTutor() {
-    if (!question.trim() || sending) return;
+    if (!question.trim() || sending || !answerLocale) return;
     setSending(true);
     setError(null);
     try {
       const activeSession = sessionId
         ? { id: sessionId }
-        : await api.startSession(lesson.subject_code);
+        : await api.startSession(lesson.subject_code, lesson.curriculum_version);
       if (!sessionId) setSessionId(activeSession.id);
-      const result = await api.sendMessage(activeSession.id, question.trim(), lesson.id);
+      const result = await api.sendMessage(activeSession.id, question.trim(), lesson.id, answerLocale);
       setAnswer(result.answer.content);
       setQuestion("");
     } catch (reason) {
@@ -66,6 +68,7 @@ export function TutorSessionScreen({ api, lesson, onBack, onPractice }: Props) {
         {error && <Text accessibilityRole="alert" style={styles.error}>{t("تعذر إرسال السؤال. تحقق من الاتصال ثم أعد المحاولة.", "Your question could not be sent. Check your connection and retry.")}</Text>}
       </ScrollView>
       <View style={styles.composer}>
+        {!answerLocale && <Text accessibilityRole="alert" style={styles.error}>{t("لغة الدرس الرسمية غير محددة. تعذر إرسال السؤال.", "The lesson's official language is undeclared. Your question cannot be sent.")}</Text>}
         <TextInput
           value={question}
           onChangeText={setQuestion}
@@ -76,7 +79,7 @@ export function TutorSessionScreen({ api, lesson, onBack, onPractice }: Props) {
           style={styles.input}
           textAlign={rtl ? "right" : "left"}
         />
-        <Pressable accessibilityRole="button" style={styles.send} onPress={askTutor} disabled={sending}>
+        <Pressable accessibilityRole="button" accessibilityState={{ disabled: sending || !answerLocale }} style={styles.send} onPress={askTutor} disabled={sending || !answerLocale}>
           {sending ? <ActivityIndicator color={theme.colors.onPrimary} /> : <Text style={styles.sendText}>{t("اسأل", "Ask")}</Text>}
         </Pressable>
       </View>

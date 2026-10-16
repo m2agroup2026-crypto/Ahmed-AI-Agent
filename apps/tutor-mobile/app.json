@@ -10,6 +10,10 @@
       "icon": "./assets/brand/aqlith-app-icon.png"
     },
     "scheme": "nexora-tutor",
+    "plugins": [["expo-speech-recognition", {
+      "microphonePermission": "Allow AQLITH to hear a command only when you tap the microphone.",
+      "speechRecognitionPermission": "Allow AQLITH to transcribe a command for your review."
+    }]],
     "assetBundlePatterns": ["**/*"]
   }
 }

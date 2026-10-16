@@ -22,23 +22,42 @@ export class TutorApiError extends Error {
 export class TutorApi {
   constructor(private readonly token: string) {}
 
+  classroomIdentity() {
+    return this.request<{ id: number; role: string }>("/api/v1/classroom/me");
+  }
+
+  classrooms() {
+    return this.request<{ id: string; name: string }[]>("/api/v1/classroom/classes");
+  }
+
+  classroomAssignments(classId: string) {
+    return this.request<{ id: string; title: string }[]>(`/api/v1/classroom/classes/${encodeURIComponent(classId)}/assignments`);
+  }
+
   private async request<T>(path: string, options: RequestInit = {}): Promise<T> {
-    const response = await fetch(`${API_URL}${path}`, {
-      ...options,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.token}`,
-        ...options.headers,
-      },
-    });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 20_000);
+    try {
+      const response = await fetch(`${API_URL}${path}`, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.token}`,
+          ...options.headers,
+        },
+      });
 
-    if (!response.ok) {
-      const body = await response.json().catch(() => null);
-      throw new TutorApiError(response.status, body?.detail ?? "Tutor request failed");
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        throw new TutorApiError(response.status, body?.detail ?? "Tutor request failed");
+      }
+
+      return await response.json() as T;
+    } finally {
+      clearTimeout(timer);
     }
-
-    return response.json() as Promise<T>;
   }
 
   lessons(subjectCode?: TutorSubject, curriculumVersion?: string) {

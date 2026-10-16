@@ -12,11 +12,12 @@ import { BrandLogo } from "../BrandLogo";
 
 type Props = {
   api: TutorApi;
+  onOpenVoice: () => void;
   onOpenLesson: (lesson: LessonSummary) => void;
   onOpenPractice: (recommendation: TutorRecommendation) => void;
 };
 
-export function HomeScreen({ api, onOpenLesson, onOpenPractice }: Props) {
+export function HomeScreen({ api, onOpenVoice, onOpenLesson, onOpenPractice }: Props) {
   const { theme, t, language, rtl } = usePreferences();
   const styles = useThemedStyles(createStyles);
   const [lessons, setLessons] = useState<LessonSummary[]>([]);
@@ -46,6 +47,9 @@ export function HomeScreen({ api, onOpenLesson, onOpenPractice }: Props) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Pressable accessibilityRole="button" onPress={onOpenVoice} style={[styles.recommendationButton, { marginBottom: 18 }]}>
+        <Text style={styles.recommendationButtonText}>{t("الأوامر الصوتية · قولها لأكليث", "Voice commands · Say it to AQLITH")}</Text>
+      </Pressable>
       <View style={styles.hero}>
         <BrandLogo />
         <Text style={styles.title}>{t("اتعلم بفهم، خطوة بخطوة", "Learn with understanding, step by step")}</Text>

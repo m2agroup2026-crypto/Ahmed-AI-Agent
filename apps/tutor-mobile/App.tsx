@@ -10,6 +10,7 @@ import { HomeScreen } from "./src/screens/HomeScreen";
 import { LoginScreen } from "./src/screens/LoginScreen";
 import { TutorSessionScreen } from "./src/screens/TutorSessionScreen";
 import { PracticeScreen } from "./src/screens/PracticeScreen";
+import { VoiceScreen } from "./src/screens/VoiceScreen";
 import { PreferenceControls, PreferencesProvider, usePreferences } from "./src/preferences";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
@@ -18,7 +19,8 @@ import { cairoFonts } from "./src/typography";
 
 type RootStackParamList = {
   Home: undefined;
-  Session: { lesson: LessonSummary };
+  Voice: undefined;
+  Session: { lesson: LessonSummary; question?: string };
   Practice: {
     subjectCode: LessonSummary["subject_code"];
     curriculumVersion: string;
@@ -56,6 +58,7 @@ function AppContent() {
           {({ navigation }) => (
             <HomeScreen
               api={api}
+              onOpenVoice={() => navigation.navigate("Voice")}
               onOpenLesson={(lesson) => navigation.navigate("Session", { lesson })}
               onOpenPractice={(recommendation) =>
                 navigation.navigate("Practice", {
@@ -68,11 +71,18 @@ function AppContent() {
             />
           )}
         </Stack.Screen>
+        <Stack.Screen name="Voice">
+          {({ navigation }) => <VoiceScreen api={api} onHome={() => navigation.navigate("Home")}
+            onLesson={(lesson, question) => navigation.navigate("Session", { lesson, question })}
+            onPractice={item => navigation.navigate("Practice", { subjectCode: item.subject_code,
+              curriculumVersion: item.curriculum_version, lessonId: item.question.lesson_id, skillCode: item.skill_code ?? undefined })} />}
+        </Stack.Screen>
         <Stack.Screen name="Session">
           {({ route, navigation }) => (
             <TutorSessionScreen
               api={api}
               lesson={route.params.lesson}
+              initialQuestion={route.params.question}
               onBack={() => navigation.goBack()}
               onPractice={() =>
                 navigation.navigate("Practice", {
