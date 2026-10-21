@@ -69,6 +69,7 @@ def import_curriculum_bundle(
     source.base_url = source_input.base_url
     source.license_status = source_input.license_status
     source.is_active = source_input.is_active
+    db.flush()
 
     version = db.get(CurriculumVersion, version_input.code)
     if version is None:
@@ -82,6 +83,7 @@ def import_curriculum_bundle(
     version.grade_level = version_input.grade_level
     version.academic_year = version_input.academic_year
     version.status = version_input.status
+    db.flush()
 
     for skill_input in payload.skills:
         skill = db.get(CurriculumSkill, skill_input.code)
@@ -119,6 +121,8 @@ def import_curriculum_bundle(
         lesson.source_locator = lesson_input.source_locator
         lesson.source_checksum = lesson_input.source_checksum
         lesson.status = lesson_input.status
+
+    db.flush()
 
     published_questions = 0
     for question_input in payload.questions:
